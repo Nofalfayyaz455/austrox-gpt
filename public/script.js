@@ -13,7 +13,7 @@ function sendMessage() {
   renderMessages();
   input.value = "";
 
-  fetch('/api/chat', {
+  fetch('https://austrox-backend-production.up.railway.app/api/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -29,6 +29,7 @@ function sendMessage() {
       saveChatHistory();
     })
     .catch(err => {
+      console.error("❌ Fetch Error:", err);
       messages.push({ role: "assistant", content: "⚠️ Error: Unable to get response." });
       renderMessages();
     });
@@ -42,7 +43,7 @@ function renderMessages() {
   messages.forEach(msg => {
     const div = document.createElement("div");
     div.className = "msg";
-    div.innerHTML = `<span class="${msg.role}">${msg.role === "user" ? "You" : "AustroX"}:</span> ${msg.content}`;
+    div.innerHTML = <span class="${msg.role}">${msg.role === "user" ? "You" : "AustroX"}:</span> ${msg.content};
     chatBox.appendChild(div);
   });
 
@@ -67,7 +68,7 @@ function loadChatHistoryList() {
 
   Object.keys(history).reverse().forEach(id => {
     const item = document.createElement("li");
-    item.textContent = `Chat ${new Date(Number(id)).toLocaleString()}`;
+    item.textContent = Chat ${new Date(Number(id)).toLocaleString()};
     item.style.cursor = "pointer";
     item.style.padding = "4px 8px";
     item.onclick = () => loadChatSession(id);
@@ -101,7 +102,7 @@ function setMode(mode) {
   currentMode = mode;
   document.getElementById("mode-quick").classList.remove("active-mode");
   document.getElementById("mode-deep").classList.remove("active-mode");
-  document.getElementById(`mode-${mode}`).classList.add("active-mode");
+  document.getElementById(mode-${mode}).classList.add("active-mode");
 }
 
 // Select model (N1, N2, Advanced N3)
