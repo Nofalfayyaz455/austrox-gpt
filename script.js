@@ -37,18 +37,25 @@ function sendMessage() {
 
 // Render messages in chat area
 function renderMessages() {
-  const chatBox = document.getElementById("chat-box");
-  chatBox.innerHTML = "";
+   // Add temporary "Thinking..." message
+const thinkingMessage = document.createElement('div');
+thinkingMessage.className = 'ai-message text-gray-500 italic my-2';
+thinkingMessage.id = 'thinking';
+thinkingMessage.innerText = '[Thinking';
+let dotCount = 0;
 
-  messages.forEach(msg => {
-    const div = document.createElement("div");
-    div.className = "msg";
-    div.innerHTML = `<span class="${msg.role}">${msg.role === "user" ? "You" : "AustroX"}:</span> ${msg.content}`;
-    chatBox.appendChild(div);
-  });
+const thinkingInterval = setInterval(() => {
+  dotCount = (dotCount + 1) % 4;
+  thinkingMessage.innerText = '[Thinking' + '.'.repeat(dotCount) + ']';
+}, 500);
+
+chatBox.appendChild(thinkingMessage);
+chatBox.scrollTop = chatBox.scrollHeight;
+
+  };
 
   chatBox.scrollTop = chatBox.scrollHeight;
-}
+
 
 // Save chat history to localStorage
 function saveChatHistory() {
@@ -90,6 +97,8 @@ function startNewChat() {
   messages = [];
   renderMessages();
 }
+
+
 
 // Toggle between light/dark theme
 function toggleTheme() {
