@@ -190,3 +190,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadChatHistoryList();
 });
+document.addEventListener("DOMContentLoaded", () => {
+  const input = document.getElementById("user-input");
+  input.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+
+  if (localStorage.getItem("theme") === "light") {
+    document.body.classList.add("light");
+  }
+
+  loadChatHistoryList();
+
+  // Mobile menu toggle
+  document.getElementById("menu-toggle").addEventListener("click", () => {
+    document.getElementById("sidebar").classList.toggle("sidebar-open");
+  });
+});
+
