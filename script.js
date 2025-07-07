@@ -13,7 +13,7 @@ function sendMessage() {
   renderMessages();
   input.value = "";
 
-  fetch('austrox-backend-production.up.railway.app/api/chat', {
+  fetch('https://austrox-backend-production.up.railway.app/api/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -29,6 +29,7 @@ function sendMessage() {
       saveChatHistory();
     })
     .catch(err => {
+      console.error("❌ Fetch Error:", err);
       messages.push({ role: "assistant", content: "⚠️ Error: Unable to get response." });
       renderMessages();
     });
@@ -130,7 +131,25 @@ function startVoiceInput() {
 
   recognition.onerror = function (event) {
     console.error("Speech recognition error", event.error);
+  
   };
+ let selectedMode = 'quick'; // default mode
+
+// Handle mode button click
+document.getElementById('quickBtn').addEventListener('click', () => {
+  selectedMode = 'quick';
+  updateModeButtons();
+});
+
+document.getElementById('deeperBtn').addEventListener('click', () => {
+  selectedMode = 'deeper';
+  updateModeButtons();
+});
+
+function updateModeButtons() {
+  const quick = document.getElementById('quickBtn');
+  const deep = document.getElementById('deeperBtn');
+}
 }
 
 // Handle enter key
@@ -148,5 +167,5 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.classList.add("light");
   }
 
-  loadChatHistoryList()
+  loadChatHistoryList();
 });
