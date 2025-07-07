@@ -241,7 +241,34 @@ body.light .chat-input-area input {
 
 /* Mobile */
 @media(max-width:768px){
-  .mobile-header { display: flex; }
+  .mobile-header {
+  display: none;
+  background: var(--sidebar-bg-dark);
+  color: var(--text-dark);
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 20px;
+  height: 60px;
+  border-bottom: 1px solid var(--border-dark);
+  z-index: 100;
+}
+body.light .mobile-header {
+  background: var(--sidebar-bg-light);
+  color: var(--text-light);
+  border-bottom: 1px solid var(--border-light);
+}
+.mobile-header h2 {
+  font-size: 1.2rem;
+  margin: 0;
+}
+#menu-toggle {
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+}
+
   .container { flex-direction: column; }
   .sidebar {
     position: fixed;
