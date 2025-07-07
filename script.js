@@ -3,7 +3,7 @@ let currentMode = "quick";
 let currentModel = "meta-llama/llama-3-70b-instruct";
 let currentChatId = Date.now();
 
-// Send message to server
+// Send user message
 function sendMessage() {
   const input = document.getElementById("user-input");
   const message = input.value.trim();
@@ -14,70 +14,72 @@ function sendMessage() {
 
   input.value = "";
 
-  // Show "thinking..."
-  const thinking = document.createElement("div");
-  thinking.className = 'ai-message text-gray-500 italic my-2';
-  thinking.id = 'thinking';
-  thinking.innerText = '[Thinking';
-  let dotCount = 0;
+  // Show thinking animation
+  const thinkingDiv = document.createElement("div");
+  thinkingDiv.className = "msg ai";
+  thinkingDiv.id = "thinking";
+  thinkingDiv.innerText = "[Thinking";
+  document.getElementById("chat-box").appendChild(thinkingDiv);
 
-  const thinkingInterval = setInterval(() => {
+  let dotCount = 0;
+  const interval = setInterval(() => {
     dotCount = (dotCount + 1) % 4;
-    thinking.innerText = '[Thinking' + '.'.repeat(dotCount) + ']';
+    thinkingDiv.innerText = "[Thinking" + ".".repeat(dotCount) + "]";
   }, 500);
 
-  const chatBox = document.getElementById("chat-box");
-  chatBox.appendChild(thinking);
-  chatBox.scrollTop = chatBox.scrollHeight;
-
-  fetch('https://austrox-backend-production.up.railway.app/api/chat', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+  fetch("https://austrox-backend-production.up.railway.app/api/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       message,
       mode: currentMode,
-      model: currentModel
-    })
+      model: currentModel,
+    }),
   })
-    .then(res => res.json())
-    .then(data => {
-      clearInterval(thinkingInterval);
-      thinking.remove();
+    .then((res) => res.json())
+    .then((data) => {
+      clearInterval(interval);
+      thinkingDiv.remove();
       messages.push({ role: "assistant", content: data.reply });
       renderMessages();
       saveChatHistory();
     })
-    .catch(err => {
-      clearInterval(thinkingInterval);
-      thinking.remove();
+    .catch((err) => {
+      clearInterval(interval);
+      thinkingDiv.remove();
       console.error("❌ Fetch Error:", err);
-      messages.push({ role: "assistant", content: "⚠️ Error: Unable to get response." });
+      messages.push({
+        role: "assistant",
+        content: "⚠️ Error: Unable to get response.",
+      });
       renderMessages();
     });
 }
 
-// Render messages in chat area
+// Render all messages in the chat
 function renderMessages() {
   const chatBox = document.getElementById("chat-box");
   chatBox.innerHTML = "";
-  messages.forEach(msg => {
+
+  messages.forEach((msg) => {
     const div = document.createElement("div");
-    div.className = "msg";
-    div.innerHTML = `<span class="${msg.role === "user" ? "user" : "ai"}">${msg.role === "user" ? "You" : "AustroX"}:</span> ${msg.content}`;
+    div.className = "msg " + (msg.role === "user" ? "user" : "ai");
+    div.innerText = (msg.role === "user" ? "You: " : "AI: ") + msg.content;
     chatBox.appendChild(div);
   });
+
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// Save chat history to localStorage
+// Save chat to local storage
 function saveChatHistory() {
-  let history = JSON.parse(localStorage.getItem("chatHistory") || "{}");
+  const history = JSON.parse(localStorage.getItem("chatHistory") || "{}");
   history[currentChatId] = messages;
   localStorage.setItem("chatHistory", JSON.stringify(history));
   loadChatHistoryList();
 }
 
-// Load chat history list into sidebar
+// Load all chat history
 function loadChatHistoryList() {
   const list = document.getElementById("chat-history-list");
   if (!list) return;
@@ -85,42 +87,21 @@ function loadChatHistoryList() {
 
   const history = JSON.parse(localStorage.getItem("chatHistory") || "{}");
 
-  Object.keys(history).reverse().forEach(id => {
-    const li = document.createElement("li");
-
-    // Chat title
-    const title = document.createElement("span");
-    title.textContent = `Chat ${new Date(Number(id)).toLocaleString()}`;
-    title.onclick = () => loadChatSession(id);
-    title.style.flex = "1";
-    title.style.cursor = "pointer";
-
-    // Delete button
-    const delBtn = document.createElement("button");
-    delBtn.innerText = "🗑️";
-    delBtn.title = "Delete this chat";
-    delBtn.onclick = (e) => {
-      e.stopPropagation();
-      deleteChatSession(id);
-    };
-
-    li.appendChild(title);
-    li.appendChild(delBtn);
-    list.appendChild(li);
-  });
+  Object.keys(history)
+    .reverse()
+    .forEach((id) => {
+      const item = document.createElement("li");
+      const preview = history[id].find((m) => m.role === "user")?.content;
+      item.textContent = preview
+        ? preview.substring(0, 30) + "..."
+        : `Chat ${new Date(Number(id)).toLocaleString()}`;
+      item.style.cursor = "pointer";
+      item.onclick = () => loadChatSession(id);
+      list.appendChild(item);
+    });
 }
 
-function deleteChatSession(id) {
-  const history = JSON.parse(localStorage.getItem("chatHistory") || "{}");
-  delete history[id];
-  localStorage.setItem("chatHistory", JSON.stringify(history));
-  loadChatHistoryList();
-  if (id == currentChatId) {
-    messages = [];
-    renderMessages();
-  }
-}
-
+// Load chat session
 function loadChatSession(chatId) {
   currentChatId = chatId;
   const history = JSON.parse(localStorage.getItem("chatHistory") || "{}");
@@ -128,17 +109,22 @@ function loadChatSession(chatId) {
   renderMessages();
 }
 
+// Start a new chat
 function startNewChat() {
   currentChatId = Date.now();
   messages = [];
   renderMessages();
+  saveChatHistory();
 }
 
+// Toggle theme
 function toggleTheme() {
   document.body.classList.toggle("light");
-  localStorage.setItem("theme", document.body.classList.contains("light") ? "light" : "dark");
+  const theme = document.body.classList.contains("light") ? "light" : "dark";
+  localStorage.setItem("theme", theme);
 }
 
+// Set mode
 function setMode(mode) {
   currentMode = mode;
   document.getElementById("quickBtn").classList.remove("active-mode");
@@ -146,13 +132,14 @@ function setMode(mode) {
   document.getElementById(mode === "quick" ? "quickBtn" : "deeperBtn").classList.add("active-mode");
 }
 
+// Set model
 function setModel(model) {
   currentModel = model;
 }
 
-// Voice input support
+// Voice input with mic pulse
 function startVoiceInput() {
-  if (!('webkitSpeechRecognition' in window)) {
+  if (!("webkitSpeechRecognition" in window)) {
     alert("Voice input not supported.");
     return;
   }
@@ -162,52 +149,59 @@ function startVoiceInput() {
   recognition.continuous = false;
   recognition.interimResults = false;
 
+  const micBtn = document.querySelector(".send-btn[title='Voice input']");
+  micBtn.classList.add("mic-active");
+
   recognition.start();
 
   recognition.onresult = function (event) {
     const input = document.getElementById("user-input");
     input.value = event.results[0][0].transcript;
+    micBtn.classList.remove("mic-active");
   };
 
   recognition.onerror = function (event) {
     console.error("Speech recognition error", event.error);
+    micBtn.classList.remove("mic-active");
+  };
+
+  recognition.onend = function () {
+    micBtn.classList.remove("mic-active");
   };
 }
 
-// Handle enter key
+// Sidebar toggle for mobile
 document.addEventListener("DOMContentLoaded", () => {
   const input = document.getElementById("user-input");
-  input.addEventListener("keydown", function (e) {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
-  });
-
-  if (localStorage.getItem("theme") === "light") {
-    document.body.classList.add("light");
+  if (input) {
+    input.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
   }
 
-  loadChatHistoryList();
-});
-document.addEventListener("DOMContentLoaded", () => {
-  const input = document.getElementById("user-input");
-  input.addEventListener("keydown", function (e) {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
-  });
-
-  if (localStorage.getItem("theme") === "light") {
-    document.body.classList.add("light");
-  }
+  const theme = localStorage.getItem("theme");
+  if (theme === "light") document.body.classList.add("light");
 
   loadChatHistoryList();
 
-  // Mobile menu toggle
-  document.getElementById("menu-toggle").addEventListener("click", () => {
-    document.getElementById("sidebar").classList.toggle("sidebar-open");
-  });
+  const toggleBtn = document.getElementById("menu-toggle");
+  const sidebar = document.getElementById("sidebar");
+  if (toggleBtn && sidebar) {
+    toggleBtn.addEventListener("click", () => {
+      sidebar.classList.toggle("open");
+    });
+  }
 });
+document.addEventListener("DOMContentLoaded", () => {
+  const menuToggle = document.getElementById("menu-toggle");
+  const sidebar = document.getElementById("sidebar");
 
+  if (menuToggle && sidebar) {
+    menuToggle.addEventListener("click", () => {
+      sidebar.classList.toggle("open");
+    });
+  }
+});
