@@ -10,8 +10,8 @@
   <div class="container">
     <!-- Sidebar -->
     <div class="sidebar">
-      <div>
-        <h1>AustroX-GPT </h1>
+      <div class="sidebar-content">
+        <h1>AustroX-GPT</h1>
 
         <div class="sidebar-section">
           <button onclick="startNewChat()">➕ New Chat</button>
@@ -28,17 +28,16 @@
         <div class="sidebar-section">
           <label>Model</label>
           <select onchange="setModel(this.value)">
-            
             <option value="meta-llama/llama-3-70b-instruct">Advanced AustroX Nofal v3</option>
           </select>
         </div>
 
-        
-      <div class="sidebar-section" style="flex: 1; overflow-y: auto; max-height: 200px;">
-         <h3>Chat History</h3>
-         <ul id="chat-history-list" style="margin: 0; padding: 0; list-style: none;"></ul>
+        <!-- Scrollable History -->
+        <div class="sidebar-section history-scroll">
+          <h3>Chat History</h3>
+          <ul id="chat-history-list"></ul>
+        </div>
       </div>
-
 
       <div class="sidebar-footer">
         <button onclick="toggleTheme()">🌓 Toggle Theme</button>
