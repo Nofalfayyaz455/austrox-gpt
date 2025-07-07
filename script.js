@@ -2,8 +2,8 @@ let messages = [];
 let currentMode = "quick";
 let currentModel = "meta-llama/llama-3-70b-instruct";
 let currentChatId = Date.now();
-const chatBox = document.getElementById("chat-box");
 
+// Send message to server
 function sendMessage() {
   const input = document.getElementById("user-input");
   const message = input.value.trim();
@@ -12,64 +12,64 @@ function sendMessage() {
   messages.push({ role: "user", content: message });
   renderMessages();
 
-  // Show [Thinking...]
-  const thinkingMessage = document.createElement("div");
-  thinkingMessage.className = "ai-message text-gray-500 italic my-2";
-  thinkingMessage.id = "thinking";
-  thinkingMessage.innerText = "[Thinking";
-  let dotCount = 0;
-  const thinkingInterval = setInterval(() => {
-    dotCount = (dotCount + 1) % 4;
-    thinkingMessage.innerText = "[Thinking" + ".".repeat(dotCount) + "]";
-  }, 500);
-  chatBox.appendChild(thinkingMessage);
-  chatBox.scrollTop = chatBox.scrollHeight;
-
   input.value = "";
 
-  fetch("https://austrox-backend-production.up.railway.app/api/chat", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+  // Show "thinking..."
+  const thinking = document.createElement("div");
+  thinking.className = 'ai-message text-gray-500 italic my-2';
+  thinking.id = 'thinking';
+  thinking.innerText = '[Thinking';
+  let dotCount = 0;
+
+  const thinkingInterval = setInterval(() => {
+    dotCount = (dotCount + 1) % 4;
+    thinking.innerText = '[Thinking' + '.'.repeat(dotCount) + ']';
+  }, 500);
+
+  const chatBox = document.getElementById("chat-box");
+  chatBox.appendChild(thinking);
+  chatBox.scrollTop = chatBox.scrollHeight;
+
+  fetch('https://austrox-backend-production.up.railway.app/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       message,
       mode: currentMode,
-      model: currentModel,
-    }),
+      model: currentModel
+    })
   })
-    .then((res) => res.json())
-    .then((data) => {
+    .then(res => res.json())
+    .then(data => {
       clearInterval(thinkingInterval);
-      thinkingMessage.remove();
+      thinking.remove();
       messages.push({ role: "assistant", content: data.reply });
       renderMessages();
       saveChatHistory();
     })
-    .catch((err) => {
-      console.error("❌ Fetch Error:", err);
+    .catch(err => {
       clearInterval(thinkingInterval);
-      thinkingMessage.remove();
-      messages.push({
-        role: "assistant",
-        content: "⚠️ Error: Unable to get response.",
-      });
+      thinking.remove();
+      console.error("❌ Fetch Error:", err);
+      messages.push({ role: "assistant", content: "⚠️ Error: Unable to get response." });
       renderMessages();
     });
 }
 
+// Render messages in chat area
 function renderMessages() {
+  const chatBox = document.getElementById("chat-box");
   chatBox.innerHTML = "";
-  messages.forEach((msg) => {
-    const msgDiv = document.createElement("div");
-    msgDiv.className =
-      msg.role === "user"
-        ? "user-message bg-blue-600 text-white rounded p-2 my-2"
-        : "ai-message bg-gray-200 text-black rounded p-2 my-2";
-    msgDiv.innerText = msg.content;
-    chatBox.appendChild(msgDiv);
+  messages.forEach(msg => {
+    const div = document.createElement("div");
+    div.className = "msg";
+    div.innerHTML = `<span class="${msg.role === "user" ? "user" : "ai"}">${msg.role === "user" ? "You" : "AustroX"}:</span> ${msg.content}`;
+    chatBox.appendChild(div);
   });
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
+// Save chat history to localStorage
 function saveChatHistory() {
   let history = JSON.parse(localStorage.getItem("chatHistory") || "{}");
   history[currentChatId] = messages;
@@ -77,6 +77,7 @@ function saveChatHistory() {
   loadChatHistoryList();
 }
 
+// Load chat history list into sidebar
 function loadChatHistoryList() {
   const list = document.getElementById("chat-history-list");
   if (!list) return;
@@ -84,16 +85,40 @@ function loadChatHistoryList() {
 
   const history = JSON.parse(localStorage.getItem("chatHistory") || "{}");
 
-  Object.keys(history)
-    .reverse()
-    .forEach((id) => {
-      const item = document.createElement("li");
-      item.textContent = `Chat ${new Date(Number(id)).toLocaleString()}`;
-      item.style.cursor = "pointer";
-      item.style.padding = "4px 8px";
-      item.onclick = () => loadChatSession(id);
-      list.appendChild(item);
-    });
+  Object.keys(history).reverse().forEach(id => {
+    const li = document.createElement("li");
+
+    // Chat title
+    const title = document.createElement("span");
+    title.textContent = `Chat ${new Date(Number(id)).toLocaleString()}`;
+    title.onclick = () => loadChatSession(id);
+    title.style.flex = "1";
+    title.style.cursor = "pointer";
+
+    // Delete button
+    const delBtn = document.createElement("button");
+    delBtn.innerText = "🗑️";
+    delBtn.title = "Delete this chat";
+    delBtn.onclick = (e) => {
+      e.stopPropagation();
+      deleteChatSession(id);
+    };
+
+    li.appendChild(title);
+    li.appendChild(delBtn);
+    list.appendChild(li);
+  });
+}
+
+function deleteChatSession(id) {
+  const history = JSON.parse(localStorage.getItem("chatHistory") || "{}");
+  delete history[id];
+  localStorage.setItem("chatHistory", JSON.stringify(history));
+  loadChatHistoryList();
+  if (id == currentChatId) {
+    messages = [];
+    renderMessages();
+  }
 }
 
 function loadChatSession(chatId) {
@@ -116,23 +141,18 @@ function toggleTheme() {
 
 function setMode(mode) {
   currentMode = mode;
-  const quickBtn = document.getElementById("quickBtn");
-  const deeperBtn = document.getElementById("deeperBtn");
-
-  quickBtn.classList.remove("active-mode");
-  deeperBtn.classList.remove("active-mode");
-
-  if (mode === "quick") quickBtn.classList.add("active-mode");
-  else deeperBtn.classList.add("active-mode");
+  document.getElementById("quickBtn").classList.remove("active-mode");
+  document.getElementById("deeperBtn").classList.remove("active-mode");
+  document.getElementById(mode === "quick" ? "quickBtn" : "deeperBtn").classList.add("active-mode");
 }
 
 function setModel(model) {
   currentModel = model;
 }
 
-// Voice input
+// Voice input support
 function startVoiceInput() {
-  if (!("webkitSpeechRecognition" in window)) {
+  if (!('webkitSpeechRecognition' in window)) {
     alert("Voice input not supported.");
     return;
   }
@@ -154,10 +174,9 @@ function startVoiceInput() {
   };
 }
 
-// Enter key to send
+// Handle enter key
 document.addEventListener("DOMContentLoaded", () => {
   const input = document.getElementById("user-input");
-
   input.addEventListener("keydown", function (e) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -165,7 +184,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Theme + history restore
   if (localStorage.getItem("theme") === "light") {
     document.body.classList.add("light");
   }
