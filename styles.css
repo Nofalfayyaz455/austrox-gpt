@@ -347,6 +347,24 @@ body.light .active-mode {
   background-color: black;
   color: white;
 }
+.sidebar-section {
+  margin-bottom: 1rem;
+}
+
+.history-scroll {
+  overflow-y: auto;
+  max-height: 200px;
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  background: var(--card-bg-dark);
+}
+
+/* Optional: style chat history items */
+#chat-history-list li:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+}
+
 
 
 }
