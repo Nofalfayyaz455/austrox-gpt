@@ -26,6 +26,10 @@ body {
   height: 100vh;
   transition: background 0.3s, color 0.3s;
 }
+body.dark {
+  background: var(--bg-dark);
+  color: var(--text-dark);
+}
 
 body.light {
   background: var(--bg-light);
