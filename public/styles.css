@@ -215,7 +215,7 @@ body.light .sidebar-footer {
   color: var(--accent);
 }
 .ai {
-  color: var(--text-dark);
+  color: black;
   opacity: 0.9;
 }
 
