@@ -205,3 +205,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+document.addEventListener("DOMContentLoaded", () => {
+  const menuToggle = document.getElementById("menu-toggle");
+  const sidebar = document.getElementById("sidebar");
+  console.log("MenuToggle:", menuToggle, "Sidebar:", sidebar);
+
+  if (menuToggle && sidebar) {
+    menuToggle.addEventListener("click", () => {
+      sidebar.classList.toggle("open");
+      console.log("Toggled 'open' class:", sidebar.classList);
+    });
+  }
+});
