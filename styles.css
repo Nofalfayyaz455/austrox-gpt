@@ -1,3 +1,4 @@
+
 :root {
   --bg-dark: #0e1117;
   --bg-light: #ffffff;
@@ -41,7 +42,11 @@ body.light {
   padding: 15px 20px;
   height: 60px;
   border-bottom: 1px solid var(--border-dark);
-  z-index: 100;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 999;
 }
 body.light .mobile-header {
   background: var(--sidebar-bg-light);
@@ -51,6 +56,7 @@ body.light .mobile-header {
 .mobile-header h2 {
   font-size: 1.2rem;
   margin: 0;
+  padding-left: 10px;
 }
 #menu-toggle {
   font-size: 1.5rem;
@@ -118,6 +124,7 @@ body.light .mode-buttons button {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  margin-top: auto;
 }
 .sidebar-footer button {
   padding: 8px;
@@ -133,43 +140,21 @@ body.light .mode-buttons button {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  background-color: var(--bg-dark);
+  margin-top: 0;
 }
-body.light .chat-main {
-  background-color: var(--bg-light);
-}
-
 .chat-box {
   flex: 1;
   padding: 20px;
   overflow-y: auto;
   scroll-behavior: smooth;
 }
-.chat-box .msg {
-  margin-bottom: 12px;
-  line-height: 1.6;
-}
-.chat-box .user {
-  font-weight: bold;
-  color: var(--accent);
-}
-.chat-box .ai {
-  font-style: italic;
-}
 
-/* ======= Input Area ======= */
 .chat-input-area {
   display: flex;
   padding: 15px;
   border-top: 1px solid var(--border-dark);
   background-color: var(--sidebar-bg-dark);
 }
-body.light .chat-input-area {
-  background-color: var(--sidebar-bg-light);
-  border-top: 1px solid var(--border-light);
-}
-
 .chat-input-area input {
   flex: 1;
   padding: 10px 15px;
@@ -180,12 +165,6 @@ body.light .chat-input-area {
   background-color: var(--input-bg-dark);
   color: var(--text-dark);
 }
-body.light .chat-input-area input {
-  background-color: var(--input-bg-light);
-  color: var(--text-light);
-  border: 1px solid var(--border-light);
-}
-
 .send-btn {
   background: black;
   color: white;
@@ -203,135 +182,69 @@ body.light .chat-input-area input {
 .send-btn:hover {
   background: var(--accent);
 }
-.active-mode {
-  background-color: var(--accent) !important;
-  color: white !important;
-}
-body.light .active-mode {
-  background-color: #007aff !important;
-  color: white !important;
-}
 
-/* ======= History Scroll (Glass) ======= */
+/* ======= Chat History ======= */
 .history-scroll {
   overflow-y: auto;
   max-height: 200px;
-  border-radius: 8px;
-  padding: 0.5rem;
-  backdrop-filter: blur(12px);
   background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-#chat-history-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-#chat-history-list li {
-  padding: 5px;
-  margin: 4px 0;
-  cursor: pointer;
-  border-radius: 4px;
-}
-#chat-history-list li:hover {
-  background: rgba(255, 255, 255, 0.1);
+  padding: 10px;
+  border-radius: 8px;
+  backdrop-filter: blur(6px);
 }
 
-/* ======= Voice Animation ======= */
-.voice-anim {
-  width: 10px;
-  height: 10px;
-  margin-left: 10px;
-  border-radius: 50%;
-  background: #0f0;
-  animation: pulse 1s infinite;
-}
-@keyframes pulse {
-  0% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.5); opacity: 0.4; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-/* --- Mobile Header and Sidebar Fixes --- */
-
-.mobile-header {
-  display: none;
-}
 .history-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background: transparent;
+  color: inherit;
   padding: 6px 8px;
   border-radius: 4px;
+  margin-bottom: 4px;
   cursor: pointer;
 }
-
 .history-item:hover {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: rgba(255, 255, 255, 0.1);
 }
-
 .delete-history-btn {
-  background: transparent;
+  background: none;
   border: none;
   color: red;
   font-size: 16px;
   cursor: pointer;
-  margin-left: 10px;
 }
 
-.delete-history-btn:hover {
-  color: darkred;
+/* ======= Voice Animation ======= */
+.voice-anim {
+  animation: pulse 1s infinite;
+  background: red !important;
+}
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.6; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
-
+/* ======= Mobile Styles ======= */
 @media (max-width: 768px) {
-  .mobile-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: var(--sidebar-bg-dark);
-    color: white;
-    padding: 12px 16px;
-    font-size: 1.2rem;
-    height: 60px;
-    position: fixed;
-    width: 100%;
-    top: 0;
-    z-index: 1000;
-  }
-
-  .mobile-header h2 {
-  margin: 0;
-  font-size: 1.2rem;
-  padding-right: 8px; /* ✅ Add this line */
-  white-space: nowrap; /* optional: prevents wrapping */
-  overflow: hidden;     /* optional: trims overflowing text */
-  text-overflow: ellipsis; /* optional: adds "..." if needed */
-}
-
-
-  #menu-toggle {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 24px;
-    cursor: pointer;
-  }
-
   .container {
     flex-direction: column;
-    margin-top: 60px; /* below the mobile header */
+    height: 100%;
+  }
+
+  .mobile-header {
+    display: flex;
   }
 
   .sidebar {
     position: fixed;
+    left: -260px;
     top: 60px;
-    left: -100%;
-    height: calc(100% - 60px);
-    width: 250px;
-    background-color: var(--sidebar-bg-dark);
-    transition: left 0.3s ease-in-out;
-    z-index: 999;
+    height: calc(100vh - 60px);
+    z-index: 998;
+    background: var(--sidebar-bg-dark);
+    transition: left 0.3s ease;
   }
 
   .sidebar.open {
@@ -339,40 +252,21 @@ body.light .active-mode {
   }
 
   .chat-main {
-    flex: 1;
+    margin-top: 60px;
     width: 100%;
-    overflow: hidden;
   }
 
   .chat-input-area {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background-color: var(--sidebar-bg-dark);
-    padding: 10px;
-    display: flex;
-    flex-direction: row;
-    gap: 8px;
-    border-top: 1px solid var(--border-dark);
-    z-index: 999;
-  }
-
-  .chat-input-area input {
-    flex: 1;
-    padding: 10px;
-    border-radius: 20px;
-    border: 1px solid var(--border-dark);
-    background-color: var(--input-bg-dark);
-    color: var(--text-dark);
+    flex-direction: column;
+    gap: 10px;
   }
 
   .send-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    font-size: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .chat-input-area input {
+    width: 100%;
   }
 }
