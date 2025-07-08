@@ -1,153 +1,126 @@
-let messages = [];
-let currentMode = "quick";
-let currentModel = "meta-llama/llama-3-70b-instruct";
+let messages = [], currentMode = "quick", currentModel = "meta-llama/llama-3-70b-instruct";
 let currentChatId = Date.now();
 
-// Send message to server
 function sendMessage() {
   const input = document.getElementById("user-input");
-  const message = input.value.trim();
-  if (!message) return;
+  const msg = input.value.trim();
+  if (!msg) return;
+  messages.push({ role: "user", content: msg });
+  renderMessages(); input.value = "";
 
-  messages.push({ role: "user", content: message });
-  renderMessages();
-  input.value = "";
+  const thinking = document.createElement("div");
+  thinking.className = "msg ai"; thinking.id = "thinking";
+  thinking.innerText = "[Thinking";
+  document.getElementById("chat-box").appendChild(thinking);
 
-  fetch('https://austrox-backend-production.up.railway.app/api/chat', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      message,
-      mode: currentMode,
-      model: currentModel
-    })
+  let dots = 0;
+  const ti = setInterval(() => {
+    dots = (dots + 1) % 4;
+    thinking.innerText = "[Thinking" + ".".repeat(dots) + "]";
+  }, 500);
+
+  fetch("https://austrox-backend-production.up.railway.app/api/chat", {
+    method:"POST", headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ message: msg, mode: currentMode, model: currentModel })
   })
-    .then(res => res.json())
+    .then(r => r.json())
     .then(data => {
+      clearInterval(ti); thinking.remove();
       messages.push({ role: "assistant", content: data.reply });
-      renderMessages();
-      saveChatHistory();
+      renderMessages(); saveChatHistory();
     })
     .catch(err => {
-      console.error("❌ Fetch Error:", err);
+      clearInterval(ti); thinking.remove();
+      console.error(err);
       messages.push({ role: "assistant", content: "⚠️ Error: Unable to get response." });
       renderMessages();
     });
 }
 
-// Render messages in chat area
 function renderMessages() {
-  const chatBox = document.getElementById("chat-box");
-  chatBox.innerHTML = "";
-
-  messages.forEach(msg => {
-    const div = document.createElement("div");
-    div.className = "msg";
-    div.innerHTML = `<span class="${msg.role}">${msg.role === "user" ? "You" : "AustroX"}:</span> ${msg.content}`;
-    chatBox.appendChild(div);
+  const cb = document.getElementById("chat-box");
+  cb.innerHTML = "";
+  messages.forEach(m => {
+    const d = document.createElement("div");
+    d.className = "msg " + (m.role === "user" ? "user" : "ai");
+    d.innerText = (m.role === "user" ? "You: " : "AI: ") + m.content;
+    cb.appendChild(d);
   });
-
-  chatBox.scrollTop = chatBox.scrollHeight;
+  cb.scrollTop = cb.scrollHeight;
 }
 
-// Save chat history to localStorage
 function saveChatHistory() {
-  let history = JSON.parse(localStorage.getItem("chatHistory") || "{}");
-  history[currentChatId] = messages;
-  localStorage.setItem("chatHistory", JSON.stringify(history));
+  const h = JSON.parse(localStorage.getItem("chatHistory") || "{}");
+  h[currentChatId] = messages;
+  localStorage.setItem("chatHistory", JSON.stringify(h));
   loadChatHistoryList();
 }
 
-// Load chat history list into sidebar
-function loadChatHistoryList() {
+function loadChatHistoryList(){
   const list = document.getElementById("chat-history-list");
-  if (!list) return;
   list.innerHTML = "";
-
-  const history = JSON.parse(localStorage.getItem("chatHistory") || "{}");
-
-  Object.keys(history).reverse().forEach(id => {
-    const item = document.createElement("li");
-    item.textContent = `Chat ${new Date(Number(id)).toLocaleString()}`;
-    item.style.cursor = "pointer";
-    item.style.padding = "4px 8px";
-    item.onclick = () => loadChatSession(id);
-    list.appendChild(item);
+  const h = JSON.parse(localStorage.getItem("chatHistory") || "{}");
+  Object.keys(h).reverse().forEach(id => {
+    const li = document.createElement("li"); li.className = "history-item";
+    const span = document.createElement("span");
+    span.textContent = `Chat ${new Date(Number(id)).toLocaleString()}`;
+    span.onclick = () => loadChatSession(id);
+    const bt = document.createElement("button"); bt.textContent = "🗑️";
+    bt.className = "delete-history-btn";
+    bt.onclick = (e) => {
+      e.stopPropagation(); delete h[id]; localStorage.setItem("chatHistory", JSON.stringify(h)); loadChatHistoryList();
+    };
+    li.append(span, bt); list.appendChild(li);
   });
 }
 
-// Load a previous chat session
-function loadChatSession(chatId) {
-  currentChatId = chatId;
-  const history = JSON.parse(localStorage.getItem("chatHistory") || "{}");
-  messages = history[chatId] || [];
+function loadChatSession(id) {
+  currentChatId = id;
+  messages = JSON.parse(localStorage.getItem("chatHistory"))[id] || [];
   renderMessages();
 }
 
-// Start new chat session
 function startNewChat() {
   currentChatId = Date.now();
   messages = [];
   renderMessages();
+  saveChatHistory();
 }
 
-// Toggle between light/dark theme
-function toggleTheme() {
+function setMode(md){
+  currentMode = md;
+  document.getElementById("quickBtn").classList.toggle("active-mode", md==="quick");
+  document.getElementById("deeperBtn").classList.toggle("active-mode", md==="deep");
+}
+
+function setModel(m){ currentModel = m; }
+
+function toggleTheme(){
   document.body.classList.toggle("light");
   localStorage.setItem("theme", document.body.classList.contains("light") ? "light" : "dark");
 }
 
-// Select mode (quick/deep)
-function setMode(mode) {
-  currentMode = mode;
-  document.getElementById("mode-quick").classList.remove("active-mode");
-  document.getElementById("mode-deep").classList.remove("active-mode");
-  document.getElementById(`mode-${mode}`).classList.add("active-mode");
+function startVoiceInput(){
+  if (!('webkitSpeechRecognition' in window)) return alert("Not supported");
+  const mic = document.querySelector(".send-btn[title='Voice input']");
+  mic.classList.add("mic-active");
+  const rec = new webkitSpeechRecognition();
+  rec.lang="en-US"; rec.interimResults=false; rec.continuous=false;
+  rec.start();
+  rec.onresult = e => { document.getElementById("user-input").value = e.results[0][0].transcript; mic.classList.remove("mic-active"); }
+  rec.onerror = () => mic.classList.remove("mic-active");
+  rec.onend = () => mic.classList.remove("mic-active");
 }
 
-// Select model (N1, N2, Advanced N3)
-function setModel(model) {
-  currentModel = model;
-}
-
-// Voice input support
-function startVoiceInput() {
-  if (!('webkitSpeechRecognition' in window)) {
-    alert("Voice input not supported.");
-    return;
-  }
-
-  const recognition = new webkitSpeechRecognition();
-  recognition.lang = "en-US";
-  recognition.continuous = false;
-  recognition.interimResults = false;
-
-  recognition.start();
-
-  recognition.onresult = function (event) {
-    const input = document.getElementById("user-input");
-    input.value = event.results[0][0].transcript;
-  };
-
-  recognition.onerror = function (event) {
-    console.error("Speech recognition error", event.error);
-  };
-}
-
-// Handle enter key
 document.addEventListener("DOMContentLoaded", () => {
-  const input = document.getElementById("user-input");
-  input.addEventListener("keydown", function (e) {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
+  if (localStorage.getItem("theme")==="light") document.body.classList.add("light");
+  loadChatHistoryList();
+
+  document.getElementById("menu-toggle")?.addEventListener("click", () => {
+    document.getElementById("sidebar").classList.toggle("open");
   });
 
-  // Load theme and chat history
-  if (localStorage.getItem("theme") === "light") {
-    document.body.classList.add("light");
-  }
-
-  loadChatHistoryList();
+  document.getElementById("user-input").addEventListener("keydown", e => {
+    if (e.key==="Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  });
 });
