@@ -1,4 +1,3 @@
-/* Base Styling */
 :root {
   --bg-dark: #0e1117;
   --bg-light: #ffffff;
@@ -70,14 +69,12 @@ body.light .history-item {
   background: #e0e0e0;
   color: black;
 }
-
 .history-item:hover {
   background-color: #333;
 }
 body.light .history-item:hover {
   background-color: #d0d0d0;
 }
-
 .delete-history-btn {
   background: none;
   border: none;
@@ -87,25 +84,26 @@ body.light .history-item:hover {
   margin-left: 8px;
 }
 
-/* Chat Container */
+/* Main Chat Section */
 #main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 16px;
-  box-sizing: border-box;
   position: relative;
+  height: 100%;
+  overflow: hidden;
 }
 
 /* Chat Box */
 #chat-box {
   flex: 1;
   overflow-y: auto;
-  padding-right: 8px;
-  margin-bottom: 16px;
+  padding: 10px;
+  padding-bottom: 80px; /* space for fixed input */
   scroll-behavior: smooth;
 }
 
+/* Messages */
 .msg {
   padding: 10px 14px;
   border-radius: 10px;
@@ -134,22 +132,28 @@ body.light .ai {
   color: black;
 }
 
-/* Input Area */
+/* Fixed Bottom Input */
 #input-area {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  position: fixed;
+  bottom: 0;
+  left: 260px;
+  right: 0;
   background-color: var(--input-bg-dark);
   padding: 10px;
-  border-radius: 12px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  box-sizing: border-box;
+  z-index: 10;
 }
 body.light #input-area {
   background-color: var(--input-bg-light);
 }
 
+/* Input */
 #user-input {
   flex: 1;
-  padding: 10px 14px;
+  padding: 12px 14px;
   border-radius: 8px;
   border: none;
   outline: none;
@@ -176,17 +180,27 @@ body.light #user-input {
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  transition: background 0.3s ease;
 }
 .send-btn:hover {
-  background: #222;
+  background: #333;
 }
 body.light .send-btn {
   background: #000;
   color: #fff;
 }
 
-/* Mode Switch Buttons */
+/* Mic Pulse Animation */
+.mic-active {
+  animation: pulse 1s infinite;
+  background-color: red !important;
+}
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* Mode Buttons */
 .mode-btn {
   margin: 6px 4px 0 0;
   padding: 6px 10px;
@@ -206,18 +220,35 @@ body.light .mode-btn {
   color: white;
 }
 
-/* Mic active pulse */
-.mic-active {
-  animation: pulse 1s infinite;
-  background-color: red !important;
+/* Sidebar Action Buttons (Bottom) */
+.sidebar-buttons {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
+.sidebar-buttons button {
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  background: #333;
+  color: white;
+  transition: background 0.3s ease;
+}
+.sidebar-buttons button:hover {
+  background: #555;
+}
+body.light .sidebar-buttons button {
+  background: #ddd;
+  color: black;
+}
+body.light .sidebar-buttons button:hover {
+  background: #ccc;
 }
 
-/* Sidebar Toggle (Mobile) */
+/* Mobile Responsive */
 #menu-toggle {
   position: absolute;
   left: 10px;
@@ -234,7 +265,6 @@ body.light #menu-toggle {
   color: black;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   body {
     flex-direction: column;
@@ -257,8 +287,12 @@ body.light #menu-toggle {
     display: block;
   }
 
-  #main {
-    padding-top: 50px;
+  #input-area {
+    left: 0;
+  }
+
+  #chat-box {
+    padding-bottom: 100px;
   }
 
   .msg {
