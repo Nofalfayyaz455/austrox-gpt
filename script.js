@@ -64,7 +64,7 @@ function renderMessages() {
   messages.forEach((msg) => {
     const div = document.createElement("div");
     div.className = "msg " + (msg.role === "user" ? "user" : "ai");
-    div.innerText = (msg.role === "user" ? "You: " : "AI: ") + msg.content;
+    div.innerText = (msg.role === "user" ? "You: " : "AustroX-GPT🔥: ") + msg.content;
     chatBox.appendChild(div);
   });
 
@@ -185,7 +185,42 @@ document.addEventListener("DOMContentLoaded", () => {
   const theme = localStorage.getItem("theme");
   if (theme === "light") document.body.classList.add("light");
 
+  function loadChatHistoryList() {
+  const list = document.getElementById("chat-history-list");
+  if (!list) return;
+  list.innerHTML = "";
+
+  const history = JSON.parse(localStorage.getItem("chatHistory") || "{}");
+
+  Object.keys(history).reverse().forEach(id => {
+    const item = document.createElement("li");
+    item.classList.add("history-item");
+
+    const text = document.createElement("span");
+    text.textContent = `Chat ${new Date(Number(id)).toLocaleString()}`;
+    text.onclick = () => loadChatSession(id);
+
+    const delBtn = document.createElement("button");
+    delBtn.textContent = "🗑️";
+    delBtn.classList.add("delete-history-btn");
+    delBtn.onclick = (e) => {
+      e.stopPropagation(); // Prevent loading the chat
+      deleteChatHistory(id);
+    };
+
+    item.appendChild(text);
+    item.appendChild(delBtn);
+    list.appendChild(item);
+  });
+}
+
+function deleteChatHistory(chatId) {
+  const history = JSON.parse(localStorage.getItem("chatHistory") || "{}");
+  delete history[chatId];
+  localStorage.setItem("chatHistory", JSON.stringify(history));
   loadChatHistoryList();
+}
+
 
   const toggleBtn = document.getElementById("menu-toggle");
   const sidebar = document.getElementById("sidebar");
