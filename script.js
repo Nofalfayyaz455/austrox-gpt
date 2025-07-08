@@ -14,7 +14,6 @@ function sendMessage() {
 
   input.value = "";
 
-  // Show thinking animation
   const thinkingDiv = document.createElement("div");
   thinkingDiv.className = "msg ai";
   thinkingDiv.id = "thinking";
@@ -56,7 +55,7 @@ function sendMessage() {
     });
 }
 
-// Render all messages in the chat
+// Render messages
 function renderMessages() {
   const chatBox = document.getElementById("chat-box");
   chatBox.innerHTML = "";
@@ -71,7 +70,7 @@ function renderMessages() {
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// Save chat to local storage
+// Save chat to localStorage
 function saveChatHistory() {
   const history = JSON.parse(localStorage.getItem("chatHistory") || "{}");
   history[currentChatId] = messages;
@@ -79,7 +78,7 @@ function saveChatHistory() {
   loadChatHistoryList();
 }
 
-// Load all chat history
+// Load chat history sidebar list
 function loadChatHistoryList() {
   const list = document.getElementById("chat-history-list");
   if (!list) return;
@@ -87,21 +86,43 @@ function loadChatHistoryList() {
 
   const history = JSON.parse(localStorage.getItem("chatHistory") || "{}");
 
-  Object.keys(history)
-    .reverse()
-    .forEach((id) => {
-      const item = document.createElement("li");
-      const preview = history[id].find((m) => m.role === "user")?.content;
-      item.textContent = preview
-        ? preview.substring(0, 30) + "..."
-        : `Chat ${new Date(Number(id)).toLocaleString()}`;
-      item.style.cursor = "pointer";
-      item.onclick = () => loadChatSession(id);
-      list.appendChild(item);
-    });
+  Object.keys(history).reverse().forEach(id => {
+    const item = document.createElement("li");
+    item.classList.add("history-item");
+
+    const preview = history[id].find((m) => m.role === "user")?.content;
+    const titleText = preview
+      ? preview.split(" ").slice(0, 4).join(" ") + "..."
+      : `Chat ${new Date(Number(id)).toLocaleString()}`;
+
+    const title = document.createElement("span");
+    title.textContent = titleText;
+    title.classList.add("chat-title");
+    title.onclick = () => loadChatSession(id);
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "🗑️";
+    deleteBtn.className = "delete-history-btn";
+    deleteBtn.onclick = (e) => {
+      e.stopPropagation();
+      deleteChatHistory(id);
+    };
+
+    item.appendChild(title);
+    item.appendChild(deleteBtn);
+    list.appendChild(item);
+  });
 }
 
-// Load chat session
+// Delete a single chat session
+function deleteChatHistory(chatId) {
+  const history = JSON.parse(localStorage.getItem("chatHistory") || "{}");
+  delete history[chatId];
+  localStorage.setItem("chatHistory", JSON.stringify(history));
+  loadChatHistoryList();
+}
+
+// Load specific chat session
 function loadChatSession(chatId) {
   currentChatId = chatId;
   const history = JSON.parse(localStorage.getItem("chatHistory") || "{}");
@@ -109,7 +130,7 @@ function loadChatSession(chatId) {
   renderMessages();
 }
 
-// Start a new chat
+// Start a new empty chat
 function startNewChat() {
   currentChatId = Date.now();
   messages = [];
@@ -117,14 +138,14 @@ function startNewChat() {
   saveChatHistory();
 }
 
-// Toggle theme
+// Set dark/light theme
 function toggleTheme() {
   document.body.classList.toggle("light");
   const theme = document.body.classList.contains("light") ? "light" : "dark";
   localStorage.setItem("theme", theme);
 }
 
-// Set mode
+// Set chat mode
 function setMode(mode) {
   currentMode = mode;
   document.getElementById("quickBtn").classList.remove("active-mode");
@@ -132,12 +153,12 @@ function setMode(mode) {
   document.getElementById(mode === "quick" ? "quickBtn" : "deeperBtn").classList.add("active-mode");
 }
 
-// Set model
+// Set model (meta-llama, gpt, etc.)
 function setModel(model) {
   currentModel = model;
 }
 
-// Voice input with mic pulse
+// Voice input
 function startVoiceInput() {
   if (!("webkitSpeechRecognition" in window)) {
     alert("Voice input not supported.");
@@ -170,11 +191,12 @@ function startVoiceInput() {
   };
 }
 
-// Sidebar toggle for mobile
+// On page load
 document.addEventListener("DOMContentLoaded", () => {
+  // Send on Enter
   const input = document.getElementById("user-input");
   if (input) {
-    input.addEventListener("keydown", function (e) {
+    input.addEventListener("keydown", (e) => {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
         sendMessage();
@@ -182,46 +204,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Set theme
   const theme = localStorage.getItem("theme");
   if (theme === "light") document.body.classList.add("light");
 
-  function loadChatHistoryList() {
-  const list = document.getElementById("chat-history-list");
-  if (!list) return;
-  list.innerHTML = "";
-
-  const history = JSON.parse(localStorage.getItem("chatHistory") || "{}");
-
-  Object.keys(history).reverse().forEach(id => {
-    const item = document.createElement("li");
-    item.classList.add("history-item");
-
-    const text = document.createElement("span");
-    text.textContent = `Chat ${new Date(Number(id)).toLocaleString()}`;
-    text.onclick = () => loadChatSession(id);
-
-    const delBtn = document.createElement("button");
-    delBtn.textContent = "🗑️";
-    delBtn.classList.add("delete-history-btn");
-    delBtn.onclick = (e) => {
-      e.stopPropagation(); // Prevent loading the chat
-      deleteChatHistory(id);
-    };
-
-    item.appendChild(text);
-    item.appendChild(delBtn);
-    list.appendChild(item);
-  });
-}
-
-function deleteChatHistory(chatId) {
-  const history = JSON.parse(localStorage.getItem("chatHistory") || "{}");
-  delete history[chatId];
-  localStorage.setItem("chatHistory", JSON.stringify(history));
+  // Load chat history
   loadChatHistoryList();
-}
 
-
+  // Sidebar toggle
   const toggleBtn = document.getElementById("menu-toggle");
   const sidebar = document.getElementById("sidebar");
   if (toggleBtn && sidebar) {
@@ -230,29 +220,3 @@ function deleteChatHistory(chatId) {
     });
   }
 });
-document.addEventListener("DOMContentLoaded", () => {
-  const menuToggle = document.getElementById("menu-toggle");
-  const sidebar = document.getElementById("sidebar");
-
-  if (menuToggle && sidebar) {
-    menuToggle.addEventListener("click", () => {
-      sidebar.classList.toggle("open");
-    });
-  }
-});
-document.addEventListener("DOMContentLoaded", () => {
-  const menuToggle = document.getElementById("menu-toggle");
-  const sidebar = document.getElementById("sidebar");
-  console.log("MenuToggle:", menuToggle, "Sidebar:", sidebar);
-});
-document.addEventListener("DOMContentLoaded", () => {
-  const menuToggle = document.getElementById("menu-toggle");
-  const sidebar = document.getElementById("sidebar");
-
-  if (menuToggle && sidebar) {
-    menuToggle.addEventListener("click", () => {
-      sidebar.classList.toggle("open");
-    });
-  }
-});
-
