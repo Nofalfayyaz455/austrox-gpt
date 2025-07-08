@@ -252,52 +252,6 @@ body.light .active-mode {
   100% { transform: scale(1); opacity: 1; }
 }
 
-/* ======= Mobile Responsive ======= */
-@media (max-width: 768px) {
-  .mobile-header {
-    display: flex;
-  }
-
-  .container {
-    flex-direction: column;
-  }
-
-  .sidebar {
-    position: fixed;
-    top: 60px;
-    left: -100%;
-    width: 250px;
-    height: calc(100% - 60px);
-    z-index: 99;
-    background: var(--sidebar-bg-dark);
-    overflow-y: auto;
-  }
-  .sidebar.open {
-    left: 0;
-  }
-
-  .chat-main {
-    margin-bottom: 70px;
-  }
-
-  .chat-input-area {
-    position: fixed;
-    bottom: 0;
-    left: 0; right: 0;
-    z-index: 10;
-    padding: 10px;
-  }
-
-  .chat-input-area input {
-    margin-bottom: 5px;
-  }
-
-  .send-btn {
-    width: 36px;
-    height: 36px;
-    font-size: 16px;
-  }
-}
 /* --- Mobile Header and Sidebar Fixes --- */
 
 .mobile-header {
