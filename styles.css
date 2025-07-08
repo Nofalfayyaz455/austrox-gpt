@@ -257,6 +257,32 @@ body.light .active-mode {
 .mobile-header {
   display: none;
 }
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.history-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.delete-history-btn {
+  background: transparent;
+  border: none;
+  color: red;
+  font-size: 16px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.delete-history-btn:hover {
+  color: darkred;
+}
+
 
 @media (max-width: 768px) {
   .mobile-header {
@@ -275,9 +301,14 @@ body.light .active-mode {
   }
 
   .mobile-header h2 {
-    margin: 0;
-    font-size: 1.2rem;
-  }
+  margin: 0;
+  font-size: 1.2rem;
+  padding-right: 8px; /* ✅ Add this line */
+  white-space: nowrap; /* optional: prevents wrapping */
+  overflow: hidden;     /* optional: trims overflowing text */
+  text-overflow: ellipsis; /* optional: adds "..." if needed */
+}
+
 
   #menu-toggle {
     background: none;
