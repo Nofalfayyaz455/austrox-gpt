@@ -1,8 +1,9 @@
 :root {
   --bg-dark: #0d0f14;
   --bg-light: #f7f7f7;
-  --text-dark: #e0e0e0;
-  --text-light: #333333;
+  --ai-text-dark: #e0e0e0;
+  --ai-text-light: #1a1a1a;
+  --text-dark: #e0e0e0
   --accent: #00d1ff;
   --sidebar-bg-dark: #12151c;
   --sidebar-bg-light: #ffffff;
@@ -26,10 +27,7 @@ body {
   height: 100vh;
   transition: background 0.3s, color 0.3s;
 }
-body.dark {
-  background: var(--bg-dark);
-  color: var(--text-dark);
-}
+
 
 body.light {
   background: var(--bg-light);
@@ -219,9 +217,13 @@ body.light .sidebar-footer {
   color: var(--accent);
 }
 .ai {
-  color: black;
+  color: var(--ai-text-dark);
   opacity: 0.9;
 }
+body.light .ai {
+  color: var(--ai-text-light);
+}
+
 
 /* Input area */
 .chat-input-area {
