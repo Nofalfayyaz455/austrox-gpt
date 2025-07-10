@@ -124,3 +124,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.key==="Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
   });
 });
+// Redirect to login if not logged in
+if (!localStorage.getItem("currentUser")) {
+  window.location.href = "login.html";
+}
+
