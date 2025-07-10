@@ -2,23 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>AustroX-GPT</title>
+  <title>AustroX‑GPT 💎</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="styles.css" />
+  
+
 </head>
 <body>
-
-  <!-- ✅ Move this outside .container -->
+ 
+  <!-- Mobile header -->
   <div class="mobile-header">
     <button id="menu-toggle">☰</button>
-    <h2>AustroX-GPT🔥</h2>
+    <h2>AustroX‑GPT 💎</h2>
   </div>
 
   <div class="container">
     <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
+    <div id="sidebar" class="sidebar">
       <div class="sidebar-content">
-        <h1>AustroX-GPT🔥</h1>
+        <h1>AustroX‑GPT</h1>
 
         <div class="sidebar-section">
           <button onclick="startNewChat()">➕ New Chat</button>
@@ -27,19 +29,18 @@
         <div class="sidebar-section">
           <label>Mode</label>
           <div class="mode-buttons">
-            <button id="quickBtn" class="active-mode" onclick="setMode('quick')">⚡ Quick Answer</button>
-            <button id="deeperBtn" onclick="setMode('deep')">🧠 Deeper Think</button>
+            <button id="quickBtn" class="active-mode" onclick="setMode('quick')">⚡ Quick</button>
+            <button id="deeperBtn" onclick="setMode('deep')">🧠 Deep</button>
           </div>
         </div>
 
         <div class="sidebar-section">
           <label>Model</label>
           <select onchange="setModel(this.value)">
-            <option value="meta-llama/llama-3-70b-instruct">Advanced AustroX Nofal v3</option>
+            <option value="meta-llama/llama-3-70b-instruct">Advanced Nofal v3</option>
           </select>
         </div>
 
-        <!-- Scrollable History -->
         <div class="sidebar-section history-scroll">
           <h3>Chat History</h3>
           <ul id="chat-history-list"></ul>
@@ -52,12 +53,11 @@
       </div>
     </div>
 
-    <!-- Main Chat Area -->
+    <!-- Main Chat -->
     <div class="chat-main">
-      <div class="chat-box" id="chat-box"></div>
-
+      <div id="chat-box" class="chat-box"></div>
       <div class="chat-input-area">
-        <input type="text" id="user-input" placeholder="Type your message..." />
+        <input id="user-input" type="text" placeholder="Type your message..." />
         <button class="send-btn" onclick="sendMessage()">⬆️</button>
         <button class="send-btn" title="Voice input" onclick="startVoiceInput()">🎤</button>
       </div>
