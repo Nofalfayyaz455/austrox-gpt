@@ -2,68 +2,52 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AustroX-GPT</title>
-  <link rel="icon" href="favicon.ico" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <!-- 🌐 Mobile Header -->
-  <div class="mobile-header">
-    <h2>AustroX-GPT</h2>
-    <button id="menu-toggle">☰</button>
-  </div>
-
-  <!-- 🧠 Container -->
   <div class="container">
-    <!-- 📚 Sidebar -->
-    <div class="sidebar" id="sidebar">
-      <div class="sidebar-content">
-        <h1>🤖 AustroX-GPT</h1>
+    <!-- Sidebar -->
+    <aside class="sidebar desktop-only">
+      <h1 class="logo">💎 AustroX</h1>
+      <button id="newChat">＋ New Chat</button>
+      <ul id="chatHistoryList"></ul>
+    </aside>
 
-        <div class="sidebar-section">
-          <label>🧠 Mode:</label>
-          <div class="mode-buttons">
-            <button id="quickBtn" class="active-mode" onclick="setMode('quick')">Quick</button>
-            <button id="deeperBtn" onclick="setMode('deep')">Deeper</button>
-          </div>
-        </div>
-
-        <div class="sidebar-section">
-          <label>🤖 Model:</label>
-          <select onchange="setModel(this.value)">
-            <option value="meta-llama/llama-3-70b-instruct">AustroX N1 (LLaMA 3)</option>
-            <option value="gpt-3.5-turbo">AustroX N2 (GPT-3.5)</option>
-            <option value="gemini-pro">AustroX N3 (Gemini)</option>
-          </select>
-        </div>
-
-        <div class="sidebar-section">
-          <label>💾 Chat History:</label>
-          <ul id="chat-history-list" class="history-scroll"></ul>
-        </div>
-      </div>
-
-      <!-- 🔚 Sidebar Footer -->
-      <div class="sidebar-footer">
-        <button onclick="startNewChat()">➕ New Chat</button>
-        <button onclick="toggleTheme()">🌗 Toggle Theme</button>
-        <button onclick="logout()">🔓 Logout</button>
+    <!-- Mobile Menu -->
+    <div class="mobile-menu mobile-only">
+      <button id="menuToggle">☰</button>
+      <div id="mobileSidebar" class="hidden">
+        <button id="newChatMobile">＋ New Chat</button>
+        <ul id="chatHistoryListMobile"></ul>
       </div>
     </div>
 
-    <!-- 💬 Chat Main -->
-    <div class="chat-main">
-      <div id="chat-box" class="chat-box"></div>
-      <div class="chat-input-area">
-        <input id="user-input" placeholder="Type your message..." />
-        <button id="mic-btn" onclick="startVoiceInput()">🎤</button>
-        <button class="send-btn" onclick="sendMessage()">Send</button>
+    <!-- Main Chat Section -->
+    <main class="chat-area">
+      <div class="header">
+        <select id="mode">
+          <option value="quick">⚡ Quick Answer</option>
+          <option value="deep">🧠 Deeper Think</option>
+        </select>
+        <select id="model">
+          <option value="n1">AustroX N1</option>
+          <option value="n2">AustroX N2</option>
+          <option value="n3">AustroX N3</option>
+        </select>
+        <button id="themeToggle">🌙</button>
       </div>
-    </div>
+
+      <div id="chatDisplay" class="chat-display"></div>
+
+      <div class="input-area">
+        <textarea id="userInput" placeholder="Type your message..."></textarea>
+        <button id="sendBtn">➤</button>
+      </div>
+    </main>
   </div>
 
-  <!-- 🧠 JS -->
   <script src="script.js"></script>
 </body>
 </html>
