@@ -1,69 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>AustroX‑GPT 💎</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="styles.css" />
-  
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>AustroX‑GPT 💎</title>
+<script>
+  if (!localStorage.getItem("currentUser")) {
+    window.location.href = "login.html";
+  }
+  if (localStorage.getItem("theme")==="light") document.documentElement.classList.add("light");
+</script>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
- 
-  <!-- Mobile header -->
   <div class="mobile-header">
     <button id="menu-toggle">☰</button>
     <h2>AustroX‑GPT 💎</h2>
+    <button onclick="logout()">🚪</button>
   </div>
-
   <div class="container">
-    <!-- Sidebar -->
-    <div id="sidebar" class="sidebar">
+    <aside id="sidebar" class="sidebar">
       <div class="sidebar-content">
         <h1>AustroX‑GPT</h1>
-
-        <div class="sidebar-section">
-          <button onclick="startNewChat()">➕ New Chat</button>
-        </div>
-
+        <div><button onclick="startNewChat()">➕ New Chat</button></div>
         <div class="sidebar-section">
           <label>Mode</label>
           <div class="mode-buttons">
             <button id="quickBtn" class="active-mode" onclick="setMode('quick')">⚡ Quick</button>
-            <button id="deeperBtn" onclick="setMode('deep')">🧠 Deep</button>
+            <button id="deepBtn" onclick="setMode('deep')">🧠 Deep</button>
           </div>
         </div>
-
         <div class="sidebar-section">
           <label>Model</label>
           <select onchange="setModel(this.value)">
-            <option value="meta-llama/llama-3-70b-instruct">Advanced Nofal v3</option>
+            <option value="N1">AustroX N1</option>
+            <option value="N2">AustroX N2</option>
+            <option value="N3">AustroX N3</option>
           </select>
         </div>
-
         <div class="sidebar-section history-scroll">
-          <h3>Chat History</h3>
+          <h3>History</h3>
           <ul id="chat-history-list"></ul>
         </div>
       </div>
-
       <div class="sidebar-footer">
-        <button onclick="toggleTheme()">🌓 Toggle Theme</button>
-        <button onclick="window.location.href='login.html'">🚪 Logout</button>
+        <button onclick="toggleTheme()">🌓 Theme</button>
+        <button onclick="logout()">🚪 Logout</button>
       </div>
-    </div>
-
-    <!-- Main Chat -->
-    <div class="chat-main">
+    </aside>
+    <main class="chat-main">
       <div id="chat-box" class="chat-box"></div>
       <div class="chat-input-area">
-        <input id="user-input" type="text" placeholder="Type your message..." />
+        <input id="user-input" placeholder="Type a message…" />
         <button class="send-btn" onclick="sendMessage()">⬆️</button>
-        <button class="send-btn" title="Voice input" onclick="startVoiceInput()">🎤</button>
+        <button class="send-btn" id="voice-btn" title="Voice input" onclick="startVoiceInput()">🎤</button>
       </div>
-    </div>
+    </main>
   </div>
-
-  <script src="script.js"></script>
+<script src="auth.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
