@@ -1,136 +1,27 @@
-let messages = [];
-let currentMode = "quick";
-let currentModel = "meta-llama/llama-3-70b-instruct";
-let currentChatId = Date.now();
+// State
+let currentUser = localStorage.getItem("currentUser");
+let messages = [], currentChatId = Date.now();
+let currentMode = "quick", currentModel = "N1";
 
-// Send user message
-function sendMessage() {
-  const input = document.getElementById("user-input");
-  const message = input.value.trim();
-  if (!message) return;
-
-  messages.push({ role: "user", content: message });
-  renderMessages();
-
-  input.value = "";
-
-  const thinkingDiv = document.createElement("div");
-  thinkingDiv.className = "msg ai";
-  thinkingDiv.id = "thinking";
-  thinkingDiv.innerText = "[Thinking";
-  document.getElementById("chat-box").appendChild(thinkingDiv);
-
-  let dotCount = 0;
-  const interval = setInterval(() => {
-    dotCount = (dotCount + 1) % 4;
-    thinkingDiv.innerText = "[Thinking" + ".".repeat(dotCount) + "]";
-  }, 500);
-
-  fetch("https://austrox-backend-production.up.railway.app/api/chat", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      message,
-      mode: currentMode,
-      model: currentModel,
-    }),
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      clearInterval(interval);
-      thinkingDiv.remove();
-      messages.push({ role: "assistant", content: data.reply });
-      renderMessages();
-      saveChatHistory();
-    })
-    .catch((err) => {
-      clearInterval(interval);
-      thinkingDiv.remove();
-      console.error("❌ Fetch Error:", err);
-      messages.push({
-        role: "assistant",
-        content: "⚠️ Error: Unable to get response.",
-      });
-      renderMessages();
-    });
-}
-
-// Render messages
-function renderMessages() {
-  const chatBox = document.getElementById("chat-box");
-  chatBox.innerHTML = "";
-
-  messages.forEach((msg) => {
-    const div = document.createElement("div");
-    div.className = "msg " + (msg.role === "user" ? "user" : "ai");
-    div.innerText = (msg.role === "user" ? "You: " : "AustroX-GPT🔥: ") + msg.content;
-    chatBox.appendChild(div);
-  });
-
-  chatBox.scrollTop = chatBox.scrollHeight;
-}
-
-// Save chat to localStorage
-function saveChatHistory() {
-  const history = JSON.parse(localStorage.getItem("chatHistory") || "{}");
-  history[currentChatId] = messages;
-  localStorage.setItem("chatHistory", JSON.stringify(history));
+// Initialize
+window.addEventListener("DOMContentLoaded", () => {
   loadChatHistoryList();
-}
-
-// Load chat history sidebar list
-function loadChatHistoryList() {
-  const list = document.getElementById("chat-history-list");
-  if (!list) return;
-  list.innerHTML = "";
-
-  const history = JSON.parse(localStorage.getItem("chatHistory") || "{}");
-
-  Object.keys(history).reverse().forEach(id => {
-    const item = document.createElement("li");
-    item.classList.add("history-item");
-
-    const preview = history[id].find((m) => m.role === "user")?.content;
-    const titleText = preview
-      ? preview.split(" ").slice(0, 4).join(" ") + "..."
-      : `Chat ${new Date(Number(id)).toLocaleString()}`;
-
-    const title = document.createElement("span");
-    title.textContent = titleText;
-    title.classList.add("chat-title");
-    title.onclick = () => loadChatSession(id);
-
-    const deleteBtn = document.createElement("button");
-    deleteBtn.textContent = "🗑️";
-    deleteBtn.className = "delete-history-btn";
-    deleteBtn.onclick = (e) => {
-      e.stopPropagation();
-      deleteChatHistory(id);
-    };
-
-    item.appendChild(title);
-    item.appendChild(deleteBtn);
-    list.appendChild(item);
-  });
-}
-
-// Delete a single chat session
-function deleteChatHistory(chatId) {
-  const history = JSON.parse(localStorage.getItem("chatHistory") || "{}");
-  delete history[chatId];
-  localStorage.setItem("chatHistory", JSON.stringify(history));
-  loadChatHistoryList();
-}
-
-// Load specific chat session
-function loadChatSession(chatId) {
-  currentChatId = chatId;
-  const history = JSON.parse(localStorage.getItem("chatHistory") || "{}");
-  messages = history[chatId] || [];
   renderMessages();
-}
+  setMode(currentMode);
+  document.getElementById("menu-toggle").onclick = () => {
+    document.getElementById("sidebar").classList.toggle("open");
+  };
+  document.getElementById("user-input").addEventListener("keydown", e => {
+    if (e.key === "Enter" && !e.shiftKey) sendMessage();
+  });
+  if (localStorage.getItem("theme")==="light") document.documentElement.classList.add("light");
+});
 
-// Start a new empty chat
+// Navigation
+function logout() {
+  localStorage.removeItem("currentUser");
+  window.location.href = "login.html";
+}
 function startNewChat() {
   currentChatId = Date.now();
   messages = [];
@@ -138,85 +29,119 @@ function startNewChat() {
   saveChatHistory();
 }
 
-// Set dark/light theme
-function toggleTheme() {
-  document.body.classList.toggle("light");
-  const theme = document.body.classList.contains("light") ? "light" : "dark";
-  localStorage.setItem("theme", theme);
+// Settings
+function setMode(m) {
+  currentMode = m;
+  document.getElementById("quickBtn").classList.toggle("active-mode", m==="quick");
+  document.getElementById("deepBtn").classList.toggle("active-mode", m==="deep");
+}
+function setModel(m) {
+  currentModel = m;
 }
 
-// Set chat mode
-function setMode(mode) {
-  currentMode = mode;
-  document.getElementById("quickBtn").classList.remove("active-mode");
-  document.getElementById("deeperBtn").classList.remove("active-mode");
-  document.getElementById(mode === "quick" ? "quickBtn" : "deeperBtn").classList.add("active-mode");
+// Chat history
+function saveChatHistory() {
+  let h = JSON.parse(localStorage.getItem("chatHistory")||"{}");
+  h[currentChatId] = messages;
+  localStorage.setItem("chatHistory", JSON.stringify(h));
+  loadChatHistoryList();
+}
+function loadChatHistoryList() {
+  const list = document.getElementById("chat-history-list");
+  list.innerHTML = "";
+  let h = JSON.parse(localStorage.getItem("chatHistory")||"{}");
+  Object.keys(h).reverse().forEach(id => {
+    let li = document.createElement("li");
+    li.className = "history-item";
+    li.innerHTML = `<span>Chat ${new Date(Number(id)).toLocaleString()}</span>
+      <button class="delete-history-btn">🗑️</button>`;
+    li.onclick = () => {
+      currentChatId = id;
+      messages = h[id];
+      renderMessages();
+    };
+    li.querySelector(".delete-history-btn").onclick = e => {
+      e.stopPropagation();
+      delete h[id];
+      localStorage.setItem("chatHistory", JSON.stringify(h));
+      loadChatHistoryList();
+    };
+    list.appendChild(li);
+  });
 }
 
-// Set model (meta-llama, gpt, etc.)
-function setModel(model) {
-  currentModel = model;
+// UI messaging
+function renderMessages() {
+  const cb = document.getElementById("chat-box");
+  cb.innerHTML = "";
+  messages.forEach(m => {
+    let d = document.createElement("div");
+    d.className = "msg " + (m.role==="user"? "user":"ai");
+    d.innerText = (m.role==="user"? "You: ":"AI: ") + m.content;
+    cb.appendChild(d);
+  });
+  cb.scrollTop = cb.scrollHeight;
+}
+
+// Chat send
+function sendMessage() {
+  let inp = document.getElementById("user-input");
+  if (!inp.value.trim()) return;
+  // Auto name first message
+  if (!messages.length) document.title = inp.value.slice(0,20) + "...";
+  // Add message
+  messages.push({ role:"user", content:inp.value });
+  renderMessages();
+  saveChatHistory();
+  let thinking = document.createElement("div");
+  thinking.className="msg ai"; thinking.id="thinking"; thinking.innerText="[Thinking";
+  document.getElementById("chat-box").appendChild(thinking);
+  let dots=0;
+  const ti = setInterval(() => {
+    dots = (dots+1)%4;
+    thinking.innerText = "[Thinking" + ".".repeat(dots) + "]";
+  }, 500);
+  fetch("https://austrox-backend-production.up.railway.app/api/chat", {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({
+      message: inp.value,
+      mode: currentMode,
+      model: currentModel
+    })
+  })
+  .then(r=>r.json())
+  .then(data => {
+    clearInterval(ti);
+    thinking.remove();
+    messages.push({ role:"assistant", content:data.reply });
+    renderMessages();
+    saveChatHistory();
+  })
+  .catch(err => {
+    clearInterval(ti);
+    thinking.remove();
+    messages.push({ role:"assistant", content:"⚠️ Error: Unable to get response." });
+    renderMessages();
+  });
+  inp.value="";
 }
 
 // Voice input
 function startVoiceInput() {
-  if (!("webkitSpeechRecognition" in window)) {
-    alert("Voice input not supported.");
+  let btn = document.getElementById("voice-btn");
+  if (!('webkitSpeechRecognition' in window)) {
+    alert("Voice not supported");
     return;
   }
-
-  const recognition = new webkitSpeechRecognition();
-  recognition.lang = "en-US";
-  recognition.continuous = false;
-  recognition.interimResults = false;
-
-  const micBtn = document.querySelector(".send-btn[title='Voice input']");
-  micBtn.classList.add("mic-active");
-
-  recognition.start();
-
-  recognition.onresult = function (event) {
-    const input = document.getElementById("user-input");
-    input.value = event.results[0][0].transcript;
-    micBtn.classList.remove("mic-active");
+  btn.classList.add("mic-active");
+  let rec = new webkitSpeechRecognition();
+  rec.lang = "en-US"; rec.interimResults=false; rec.continuous=false;
+  rec.onresult = e => {
+    document.getElementById("user-input").value = e.results[0][0].transcript;
+    btn.classList.remove("mic-active");
+    rec.stop();
   };
-
-  recognition.onerror = function (event) {
-    console.error("Speech recognition error", event.error);
-    micBtn.classList.remove("mic-active");
-  };
-
-  recognition.onend = function () {
-    micBtn.classList.remove("mic-active");
-  };
+  rec.onerror = rec.onend = () => btn.classList.remove("mic-active");
+  rec.start();
 }
-
-// On page load
-document.addEventListener("DOMContentLoaded", () => {
-  // Send on Enter
-  const input = document.getElementById("user-input");
-  if (input) {
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
-      }
-    });
-  }
-
-  // Set theme
-  const theme = localStorage.getItem("theme");
-  if (theme === "light") document.body.classList.add("light");
-
-  // Load chat history
-  loadChatHistoryList();
-
-  // Sidebar toggle
-  const toggleBtn = document.getElementById("menu-toggle");
-  const sidebar = document.getElementById("sidebar");
-  if (toggleBtn && sidebar) {
-    toggleBtn.addEventListener("click", () => {
-      sidebar.classList.toggle("open");
-    });
-  }
-});
