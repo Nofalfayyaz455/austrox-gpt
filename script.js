@@ -1,7 +1,7 @@
 // State
 let currentUser = localStorage.getItem("currentUser");
 let messages = [], currentChatId = Date.now();
-let currentMode = "quick", currentModel = "google/gemini-2.0-flash-00";
+let currentMode = "quick", currentModel = "google/gemini-2.0-flash-001";
 
 // Initialize
 window.addEventListener("DOMContentLoaded", () => {
