@@ -206,7 +206,7 @@ html, body {
 .history-item {
   display: flex;
   justify-content: space-between;
-  padding: 8px;
+  padding: 8px 3px 3px 3px;
   border-radius: 10px;
   margin-bottom: 4px;
   background: transparent;
@@ -252,6 +252,7 @@ html, body {
 
 /* Messages */
 .msg {
+  margin-top: 50px;
   display: inline-block;
   margin-bottom: 16px;
   padding: 14px 18px;
