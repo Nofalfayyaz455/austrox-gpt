@@ -10,6 +10,7 @@ const menuToggle = document.getElementById('menuToggle');
 const mobileSidebar = document.getElementById('mobileSidebar');
 
 let messages = [];
+let current_model = x-ai/grok-4;
 
 sendBtn.onclick = () => sendMessage();
 userInput.addEventListener('keypress', e => {
