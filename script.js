@@ -76,12 +76,19 @@ function renderMessages() {
   cb.innerHTML = "";
   messages.forEach(m => {
     let d = document.createElement("div");
-    d.className = "msg " + (m.role==="user"? "user":"ai");
-    d.innerText = (m.role==="user"? "You: ":"AI: ") + m.content;
+    d.className = "msg " + (m.role === "user" ? "user" : "ai");
+
+    // Replace line breaks with <br> to display multi-line correctly
+    let content = m.content.replace(/\n/g, "<br>");
+
+    // Optional prefix
+    d.innerHTML = (m.role === "user" ? "<strong>You:</strong> " : "<strong>AI:</strong> ") + content;
+
     cb.appendChild(d);
   });
   cb.scrollTop = cb.scrollHeight;
 }
+
 
 // Chat send
 function sendMessage() {

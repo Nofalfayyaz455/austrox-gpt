@@ -263,6 +263,10 @@ html, body {
   width: fit-content;
   box-shadow: 0 4px 20px rgba(0,0,0,0.2);
   backdrop-filter: blur(4px);
+    white-space: pre-wrap; /* ✅ This is correct */
+  word-wrap: break-word; /* optional, not harmful */
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .user {
