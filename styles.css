@@ -231,6 +231,7 @@ html, body {
   color: var(--ai-text-dark);
   align-self: flex-start;
   margin-right: auto;
+  width:100%;
 }
 
 body.light .ai {
