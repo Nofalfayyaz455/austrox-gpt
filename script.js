@@ -1,147 +1,141 @@
-// State
-let currentUser = localStorage.getItem("currentUser");
-let messages = [], currentChatId = Date.now();
-let currentMode = "quick", currentModel = "google/gemini-2.0-flash-001";
+let messages = [];
+let currentMode = "quick";
+let currentModel = "google/gemini-2.0-flash-001";
+let chatHistory = JSON.parse(localStorage.getItem("chatHistory") || "[]");
+let currentChatName = "";
+let isFirstMessage = true;
 
-// Initialize
-window.addEventListener("DOMContentLoaded", () => {
-  loadChatHistoryList();
-  renderMessages();
-  setMode(currentMode);
-  document.getElementById("menu-toggle").onclick = () => {
-    document.getElementById("sidebar").classList.toggle("open");
-  };
-  document.getElementById("user-input").addEventListener("keydown", e => {
-    if (e.key === "Enter" && !e.shiftKey) sendMessage();
-  });
-  if (localStorage.getItem("theme")==="light") document.documentElement.classList.add("light");
+// Don't change tab title
+document.title = "AustroX-GPT";
+
+document.addEventListener("DOMContentLoaded", () => {
+  const theme = localStorage.getItem("theme");
+  if (theme === "light") document.body.classList.add("light");
+
+  const user = localStorage.getItem("currentUser");
+  if (!user) window.location.href = "login.html";
+
+  loadChatHistory();
+  attachMenuToggle();
 });
 
-// Navigation
-function logout() {
-  localStorage.removeItem("currentUser");
-  window.location.href = "login.html";
+// Send message
+async function sendMessage() {
+  const input = document.getElementById("user-input");
+  const message = input.value.trim();
+  if (!message) return;
+
+  addMessage("user", message);
+  input.value = "";
+
+  if (isFirstMessage) {
+    currentChatName = message.slice(0, 20);
+    addToHistory(currentChatName);
+    isFirstMessage = false;
+  }
+
+  const aiMessage = await getAIResponse(message);
+  addMessage("ai", aiMessage);
 }
+
+// Add message to chat
+function addMessage(sender, text) {
+  const chatBox = document.getElementById("chat-box");
+  const msg = document.createElement("div");
+  msg.className = "msg " + sender;
+  msg.innerHTML = `<span class="${sender}">${sender === "user" ? "You" : "AustroX"}:</span> ${text}`;
+  chatBox.appendChild(msg);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+// Get AI response (simulate for frontend only)
+async function getAIResponse(userMessage) {
+  return new Promise((res) =>
+    setTimeout(() => res("This is a simulated response to: " + userMessage), 1000)
+  );
+}
+
+// Toggle theme
+function toggleTheme() {
+  document.body.classList.toggle("light");
+  localStorage.setItem("theme", document.body.classList.contains("light") ? "light" : "dark");
+}
+
+// New chat
 function startNewChat() {
-  currentChatId = Date.now();
   messages = [];
-  renderMessages();
-  saveChatHistory();
+  document.getElementById("chat-box").innerHTML = "";
+  isFirstMessage = true;
 }
 
-// Settings
-function setMode(m) {
-  currentMode = m;
-  document.getElementById("quickBtn").classList.toggle("active-mode", m==="quick");
-  document.getElementById("deepBtn").classList.toggle("active-mode", m==="deep");
-}
-function setModel(m) {
-  currentModel = m;
+// Set mode
+function setMode(mode) {
+  currentMode = mode;
+  document.getElementById("quickBtn").classList.remove("active-mode");
+  document.getElementById("deeperBtn").classList.remove("active-mode");
+  document.getElementById(mode === "quick" ? "quickBtn" : "deeperBtn").classList.add("active-mode");
 }
 
-// Chat history
-function saveChatHistory() {
-  let h = JSON.parse(localStorage.getItem("chatHistory")||"{}");
-  h[currentChatId] = messages;
-  localStorage.setItem("chatHistory", JSON.stringify(h));
-  loadChatHistoryList();
+// Set model
+function setModel(model) {
+  currentModel = model;
 }
-function loadChatHistoryList() {
-  const list = document.getElementById("chat-history-list");
-  list.innerHTML = "";
-  let h = JSON.parse(localStorage.getItem("chatHistory")||"{}");
-  Object.keys(h).reverse().forEach(id => {
-    let li = document.createElement("li");
+
+// Load chat history
+function loadChatHistory() {
+  const ul = document.getElementById("chat-history-list");
+  ul.innerHTML = "";
+  chatHistory.forEach((name, index) => {
+    const li = document.createElement("li");
     li.className = "history-item";
-    li.innerHTML = `<span>Chat ${new Date(Number(id)).toLocaleString()}</span>
-      <button class="delete-history-btn">🗑️</button>`;
-    li.onclick = () => {
-      currentChatId = id;
-      messages = h[id];
-      renderMessages();
-    };
-    li.querySelector(".delete-history-btn").onclick = e => {
-      e.stopPropagation();
-      delete h[id];
-      localStorage.setItem("chatHistory", JSON.stringify(h));
-      loadChatHistoryList();
-    };
-    list.appendChild(li);
+    li.innerHTML = `
+      <span onclick="loadChat(${index})">${name}</span>
+      <button class="delete-history-btn" onclick="deleteChat(${index})">🗑</button>
+    `;
+    ul.appendChild(li);
   });
 }
 
-// UI messaging
-function renderMessages() {
-  const cb = document.getElementById("chat-box");
-  cb.innerHTML = "";
-  messages.forEach(m => {
-    let d = document.createElement("div");
-    d.className = "msg " + (m.role==="user"? "user":"ai");
-    d.innerText = (m.role==="user"? "You: ":"AI: ") + m.content;
-    cb.appendChild(d);
-  });
-  cb.scrollTop = cb.scrollHeight;
+function addToHistory(name) {
+  chatHistory.unshift(name);
+  localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
+  loadChatHistory();
 }
 
-// Chat send
-function sendMessage() {
-  let inp = document.getElementById("user-input");
-  if (!inp.value.trim()) return;
-  // Auto name first message
-  if (!messages.length) document.title = inp.value.slice(0,20) + "...";
-  // Add message
-  messages.push({ role:"user", content:inp.value });
-  renderMessages();
-  saveChatHistory();
-  let thinking = document.createElement("div");
-  thinking.className="msg ai"; thinking.id="thinking"; thinking.innerText="[Thinking";
-  document.getElementById("chat-box").appendChild(thinking);
-  let dots=0;
-  const ti = setInterval(() => {
-    dots = (dots+1)%4;
-    thinking.innerText = "[Thinking" + ".".repeat(dots) + "]";
-  }, 500);
-  fetch("https://austrox-backend-production.up.railway.app/api/chat", {
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body: JSON.stringify({
-      message: inp.value,
-      mode: currentMode,
-      model: currentModel
-    })
-  })
-  .then(r=>r.json())
-  .then(data => {
-    clearInterval(ti);
-    thinking.remove();
-    messages.push({ role:"assistant", content:data.reply });
-    renderMessages();
-    saveChatHistory();
-  })
-  .catch(err => {
-    clearInterval(ti);
-    thinking.remove();
-    messages.push({ role:"assistant", content:"⚠️ Error: Unable to get response." });
-    renderMessages();
-  });
-  inp.value="";
+function deleteChat(index) {
+  chatHistory.splice(index, 1);
+  localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
+  loadChatHistory();
+}
+
+function loadChat(index) {
+  alert("🧠 This is a placeholder to load chat: " + chatHistory[index]);
+}
+
+// Menu toggle on mobile
+function attachMenuToggle() {
+  const menuBtn = document.getElementById("menu-toggle");
+  const sidebar = document.getElementById("sidebar");
+  if (menuBtn && sidebar) {
+    menuBtn.addEventListener("click", () => {
+      sidebar.classList.toggle("open");
+    });
+  }
 }
 
 // Voice input
 function startVoiceInput() {
-  let btn = document.getElementById("voice-btn");
-  if (!('webkitSpeechRecognition' in window)) {
-    alert("Voice not supported");
-    return;
-  }
-  btn.classList.add("mic-active");
-  let rec = new webkitSpeechRecognition();
-  rec.lang = "en-US"; rec.interimResults=false; rec.continuous=false;
-  rec.onresult = e => {
-    document.getElementById("user-input").value = e.results[0][0].transcript;
-    btn.classList.remove("mic-active");
-    rec.stop();
-  };
-  rec.onerror = rec.onend = () => btn.classList.remove("mic-active");
-  rec.start();
+  const micBtn = event.target;
+  micBtn.classList.add("mic-active");
+
+  setTimeout(() => {
+    micBtn.classList.remove("mic-active");
+    sendMessageFromVoice("This is a simulated voice message.");
+  }, 2000);
+}
+
+function sendMessageFromVoice(message) {
+  const input = document.getElementById("user-input");
+  input.value = message;
+  sendMessage();
 }
