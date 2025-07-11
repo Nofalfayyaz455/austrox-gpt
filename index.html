@@ -4,61 +4,66 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>AustroX-GPT</title>
+  <link rel="icon" href="favicon.ico" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <!-- 🌐 Mobile Header -->
   <div class="mobile-header">
+    <h2>AustroX-GPT</h2>
     <button id="menu-toggle">☰</button>
-    <h2>AustroX-GPT 🔥</h2>
   </div>
 
+  <!-- 🧠 Container -->
   <div class="container">
+    <!-- 📚 Sidebar -->
     <div class="sidebar" id="sidebar">
       <div class="sidebar-content">
-        <h1>AustroX-GPT</h1>
-        <div class="sidebar-section">
-          <button onclick="startNewChat()">➕ New Chat</button>
-        </div>
+        <h1>🤖 AustroX-GPT</h1>
 
         <div class="sidebar-section">
-          <label>Mode</label>
+          <label>🧠 Mode:</label>
           <div class="mode-buttons">
-            <button id="quickBtn" class="active-mode" onclick="setMode('quick')">⚡ Quick</button>
-            <button id="deeperBtn" onclick="setMode('deep')">🧠 Deep</button>
+            <button id="quickBtn" class="active-mode" onclick="setMode('quick')">Quick</button>
+            <button id="deeperBtn" onclick="setMode('deep')">Deeper</button>
           </div>
         </div>
 
         <div class="sidebar-section">
-          <label>Model</label>
+          <label>🤖 Model:</label>
           <select onchange="setModel(this.value)">
-            <option value="meta-llama/llama-3-70b-instruct">AustroX N1</option>
-            <option value="gpt-4">AustroX N2</option>
-            <option value="claude-3">AustroX N3</option>
+            <option value="meta-llama/llama-3-70b-instruct">AustroX N1 (LLaMA 3)</option>
+            <option value="gpt-3.5-turbo">AustroX N2 (GPT-3.5)</option>
+            <option value="gemini-pro">AustroX N3 (Gemini)</option>
           </select>
         </div>
 
-        <div class="sidebar-section history-scroll">
-          <h3>Chat History</h3>
-          <ul id="chat-history-list"></ul>
+        <div class="sidebar-section">
+          <label>💾 Chat History:</label>
+          <ul id="chat-history-list" class="history-scroll"></ul>
         </div>
       </div>
 
+      <!-- 🔚 Sidebar Footer -->
       <div class="sidebar-footer">
-        <button onclick="toggleTheme()">🌓 Theme</button>
-        <button onclick="logout()">🚪 Logout</button>
+        <button onclick="startNewChat()">➕ New Chat</button>
+        <button onclick="toggleTheme()">🌗 Toggle Theme</button>
+        <button onclick="logout()">🔓 Logout</button>
       </div>
     </div>
 
+    <!-- 💬 Chat Main -->
     <div class="chat-main">
-      <div class="chat-box" id="chat-box"></div>
+      <div id="chat-box" class="chat-box"></div>
       <div class="chat-input-area">
-        <input type="text" id="user-input" placeholder="Type your message..." />
-        <button class="send-btn" onclick="sendMessage()">⬆️</button>
-        <button id="mic-btn" class="send-btn" onclick="startVoiceInput()">🎤</button>
+        <input id="user-input" placeholder="Type your message..." />
+        <button id="mic-btn" onclick="startVoiceInput()">🎤</button>
+        <button class="send-btn" onclick="sendMessage()">Send</button>
       </div>
     </div>
   </div>
 
+  <!-- 🧠 JS -->
   <script src="script.js"></script>
 </body>
 </html>
