@@ -4,12 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login - AustroX-GPT</title>
-  <script>
-    // ⚡ Apply theme before page render to prevent flash
-    if (localStorage.getItem("theme") === "light") {
-      document.documentElement.classList.add("light");
-    }
-  </script>
   <style>
     :root {
       --bg-dark: #0e1117;
@@ -40,7 +34,7 @@
       justify-content: center;
     }
 
-    .light .auth-body {
+    .auth-body.light {
       background-color: var(--bg-light);
       color: var(--text-light);
     }
@@ -62,7 +56,7 @@
       transition: all 0.3s ease;
     }
 
-    .light .auth-card {
+    .auth-body.light .auth-card {
       background-color: var(--card-bg-light);
       box-shadow: 0 0 10px #aaa;
     }
@@ -80,7 +74,7 @@
       transition: all 0.2s ease;
     }
 
-    .light input {
+    .auth-body.light input {
       background: var(--input-bg-light);
       color: var(--text-light);
       border: 1px solid var(--border-light);
