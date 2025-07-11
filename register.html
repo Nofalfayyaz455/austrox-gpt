@@ -1,138 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Register - AustroX-GPT</title>
-  <style>
-    :root {
-      --bg-dark: #0e1117;
-      --bg-light: #ffffff;
-      --text-dark: #ffffff;
-      --text-light: #000000;
-      --card-bg-dark: #161b22;
-      --card-bg-light: #f0f0f0;
-      --input-bg-dark: #1e222a;
-      --input-bg-light: #ffffff;
-      --accent: #0a84ff;
-      --border-dark: #333333;
-      --border-light: #cccccc;
-    }
-
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', sans-serif;
-    }
-
-    .auth-body {
-      background-color: var(--bg-dark);
-      color: var(--text-dark);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .auth-body.light {
-      background-color: var(--bg-light);
-      color: var(--text-light);
-    }
-
-    .auth-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .auth-card {
-      background-color: var(--card-bg-dark);
-      padding: 2rem;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
-      width: 100%;
-      max-width: 400px;
-      text-align: center;
-      transition: all 0.3s ease;
-    }
-
-    .auth-body.light .auth-card {
-      background-color: var(--card-bg-light);
-      box-shadow: 0 0 10px #aaa;
-    }
-
-    .auth-card input {
-      width: 90%;
-      padding: 12px;
-      margin: 10px 0;
-      border: 1px solid var(--border-dark);
-      background: var(--input-bg-dark);
-      color: var(--text-dark);
-      border-radius: 6px;
-      font-size: 1rem;
-      outline: none;
-      transition: all 0.2s ease;
-    }
-
-    .auth-body.light input {
-      background: var(--input-bg-light);
-      color: var(--text-light);
-      border: 1px solid var(--border-light);
-    }
-
-    .auth-card button {
-      padding: 12px 25px;
-      margin-top: 15px;
-      background: var(--accent);
-      color: white;
-      border: none;
-      cursor: pointer;
-      border-radius: 6px;
-      font-size: 1rem;
-      transition: background 0.3s;
-    }
-
-    .auth-card button:hover {
-      background: #006be9;
-    }
-
-    .auth-note {
-      font-size: 0.9rem;
-      margin-top: 15px;
-    }
-
-    .auth-note a {
-      color: #00b3ff;
-      text-decoration: none;
-    }
-
-    .theme-toggle {
-      margin-top: 15px;
-      background: transparent;
-      border: 1px solid #888;
-      padding: 8px 16px;
-      color: inherit;
-      cursor: pointer;
-      border-radius: 4px;
-    }
-
-    .theme-toggle:hover {
-      background-color: rgba(255, 255, 255, 0.1);
-    }
-  </style>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Register – AustroX‑GPT</title>
+<script>
+  if (localStorage.getItem("currentUser")) window.location.href="index.html";
+  if (localStorage.getItem("theme")==="light") document.documentElement.classList.add("light");
+</script>
+<style>
+  /* same styling as login.html */
+  :root{--bg-dark:#0d0f14;--bg-light:#f7f7f7;--text-dark:#e0e0e0;--text-light:#1a1a1a;
+    --card-dark:#16151d;--card-light:#f5f5f5;--input-dark:#1e222a;--input-light:#fff;
+    --accent:#00d1ff;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Segoe UI',sans-serif;min-height:100vh;display:flex;
+    align-items:center;justify-content:center;background:var(--bg-dark);color:var(--text-dark);
+    transition:0.3s;}
+  .light{background:var(--bg-light);color:var(--text-light);}
+  .card{background:var(--card-dark);padding:2rem;border-radius:10px;
+    box-shadow:0 0 15px rgba(0,0,0,0.6);max-width:400px;width:90%;text-align:center;}
+  .light .card{background:var(--card-light);box-shadow:0 0 10px #aaa;}
+  .card input{width:100%;padding:12px;margin:8px 0;border:1px solid #333;
+    border-radius:6px;background:var(--input-dark);color:var(--text-dark);}
+  .light .card input{background:var(--input-light);color:var(--text-light);border:1px solid #ccc;}
+  .card button{width:100%;padding:12px;margin:12px 0;background:var(--accent);
+    color:#fff;border:none;border-radius:6px;cursor:pointer;transition:0.3s;}
+  .card button:hover{background:#009ecb;}
+</style>
 </head>
-<body class="auth-body">
-  <div class="auth-wrapper">
-    <div class="auth-card">
-      <h1>📝 Register at AustroX-GPT</h1>
-      <input type="text" id="register-username" placeholder="Username" />
-      <input type="password" id="register-password" placeholder="Password" />
-      <button onclick="register()">Register</button>
-      <p class="auth-note">Already have an account? <a href="login.html">Login here</a></p>
-      <button class="theme-toggle" onclick="toggleTheme()">🌓 Toggle Theme</button>
-    </div>
-  </div>
-
-  <script src="auth.js"></script>
+<body>
+  <form class="card" onsubmit="register();return false">
+    <h1>🖊️ AustroX‑GPT Register</h1>
+    <input id="register-username" placeholder="Choose username" required/>
+    <input id="register-password" type="password" placeholder="Choose password" required/>
+    <button type="submit">Register</button>
+    <p style="font-size:.9rem">
+      Already have an account? <a href="login.html">Login here</a>
+    </p>
+    <button type="button" onclick="toggleTheme()">🌓 Toggle Theme</button>
+  </form>
+<script src="auth.js"></script>
 </body>
 </html>
