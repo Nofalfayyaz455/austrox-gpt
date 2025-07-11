@@ -1,144 +1,76 @@
-let currentMode = "quick",
-    currentModel = "meta-llama/llama-3-70b-instruct",
-    chatHistory = JSON.parse(localStorage.getItem("chatHistory") || "[]"),
-    currentChatName = "",
-    isFirstMessage = true;
+const userInput = document.getElementById('userInput');
+const sendBtn = document.getElementById('sendBtn');
+const chatDisplay = document.getElementById('chatDisplay');
+const themeToggle = document.getElementById('themeToggle');
+const newChat = document.getElementById('newChat');
+const newChatMobile = document.getElementById('newChatMobile');
+const chatList = document.getElementById('chatHistoryList');
+const chatListMobile = document.getElementById('chatHistoryListMobile');
+const menuToggle = document.getElementById('menuToggle');
+const mobileSidebar = document.getElementById('mobileSidebar');
 
-document.title = "AustroX-GPT";
+let messages = [];
 
-document.addEventListener("DOMContentLoaded", () => {
-  if (localStorage.getItem("theme") === "light") document.body.classList.add("light");
-  if (!localStorage.getItem("currentUser")) window.location.href = "login.html";
-  loadChatHistory();
-  attachMenuToggle();
+sendBtn.onclick = () => sendMessage();
+userInput.addEventListener('keypress', e => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
 });
 
 async function sendMessage() {
-  const inp = document.getElementById("user-input");
-  const msg = inp.value.trim();
+  const msg = userInput.value.trim();
   if (!msg) return;
+  displayMessage(msg, 'user');
+  userInput.value = '';
 
-  addMessage("user", msg);
-  inp.value = "";
-
-  // Save chat name on first message
-  if (isFirstMessage) {
-    currentChatName = msg.slice(0, 20).replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    addToHistory(currentChatName);
-    isFirstMessage = false;
-  }
-
-  const ai = await getAIResponse(msg);
-  addMessage("ai", ai);
-}
-
-function addMessage(role, text) {
-  const cb = document.getElementById("chat-box");
-  const message = document.createElement("div");
-  message.className = "msg " + role;
-  message.innerHTML = `<span class="${role}">${role === "user" ? "You" : "AustroX"}:</span> <div class="msg-text">${text}</div>`;
-  cb.appendChild(message);
-  cb.scrollTop = cb.scrollHeight;
-}
-
-async function getAIResponse(msg) {
   try {
-    const res = await fetch("https://austrox-backend-production.up.railway.app/api/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: msg, mode: currentMode, model: currentModel })
-    });
-    const data = await res.json();
-    return data.reply || "⚠️ No reply from AI.";
-  } catch (err) {
-    return "❌ Error contacting AI.";
+    const reply = await fetchAIResponse(msg);
+    displayMessage(reply, 'ai');
+    messages.push({ role: 'user', content: msg });
+    messages.push({ role: 'ai', content: reply });
+  } catch (error) {
+    displayMessage("⚠️ Error connecting to server.", 'ai');
+    console.error(error);
   }
 }
 
-function toggleTheme() {
-  document.body.classList.toggle("light");
-  localStorage.setItem("theme", document.body.classList.contains("light") ? "light" : "dark");
+function displayMessage(text, role) {
+  const div = document.createElement('div');
+  div.className = `message ${role}`;
+  div.textContent = text;
+  chatDisplay.appendChild(div);
+  chatDisplay.scrollTop = chatDisplay.scrollHeight;
 }
 
-function startNewChat() {
-  currentChatName = "";
-  isFirstMessage = true;
-  document.getElementById("chat-box").innerHTML = "";
-}
+// 🔗 Replace with your actual backend URL
+const API_BASE_URL = "https://austrox-backend.up.railway.app/api"; // or http://localhost:3001/api
 
-function setMode(mode) {
-  currentMode = mode;
-  document.getElementById("quickBtn").classList.toggle("active-mode", mode === "quick");
-  document.getElementById("deeperBtn").classList.toggle("active-mode", mode === "deep");
-}
-
-function setModel(model) {
-  currentModel = model;
-}
-
-function loadChatHistory() {
-  const ul = document.getElementById("chat-history-list");
-  ul.innerHTML = "";
-  chatHistory.forEach((name, index) => {
-    const li = document.createElement("li");
-    li.className = "history-item";
-    li.innerHTML = `
-      <span onclick="loadChat(${index})">${name}</span>
-      <button class="delete-history-btn" onclick="deleteChat(${index})">🗑</button>
-    `;
-    ul.appendChild(li);
+async function fetchAIResponse(message) {
+  const response = await fetch(`${API_BASE_URL}/chat`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ message })
   });
-}
 
-function addToHistory(name) {
-  chatHistory.unshift(name);
-  localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
-  loadChatHistory();
-}
-
-function deleteChat(index) {
-  chatHistory.splice(index, 1);
-  localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
-  loadChatHistory();
-}
-
-function loadChat(index) {
-  alert("Load chat: " + chatHistory[index]);
-}
-
-function attachMenuToggle() {
-  const btn = document.getElementById("menu-toggle");
-  const sidebar = document.getElementById("sidebar");
-  if (btn && sidebar) {
-    btn.addEventListener("click", () => {
-      sidebar.classList.toggle("open");
-      console.log("Sidebar toggled:", sidebar.classList);
-    });
-  }
-}
-
-function startVoiceInput() {
-  const mic = document.getElementById("mic-btn");
-  mic.classList.add("mic-active");
-
-  if (!('webkitSpeechRecognition' in window)) {
-    alert("Speech recognition not supported.");
-    mic.classList.remove("mic-active");
-    return;
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
   }
 
-  const rec = new webkitSpeechRecognition();
-  rec.lang = "en-US";
-  rec.interimResults = false;
-  rec.continuous = false;
-
-  rec.onresult = e => {
-    const transcript = e.results[0][0].transcript;
-    document.getElementById("user-input").value = transcript;
-    mic.classList.remove("mic-active");
-    sendMessage();
-  };
-
-  rec.onerror = rec.onend = () => mic.classList.remove("mic-active");
-  rec.start();
+  const data = await response.json();
+  return data.reply || "⚠️ No reply received.";
 }
+
+themeToggle.onclick = () => {
+  document.body.classList.toggle('dark');
+};
+
+newChat.onclick = () => location.reload();
+newChatMobile.onclick = () => location.reload();
+
+menuToggle.onclick = () => {
+  mobileSidebar.classList.toggle('hidden');
+};
