@@ -217,6 +217,7 @@ html, body {
   white-space: pre-wrap;
   max-width: 90%;
   box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  width: 100%;
 }
 
 .user {
