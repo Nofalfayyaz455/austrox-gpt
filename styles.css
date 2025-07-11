@@ -204,28 +204,39 @@ html, body {
   background: transparent;
 }
 
-/* Messages */
 .msg {
+  display: inline-block;
   margin-bottom: 16px;
   padding: 12px 16px;
-  border-radius: 8px;
-  max-width: 75%;
-  line-height: 1.5;
+  border-radius: 10px;
+  line-height: 1.6;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+  max-width: 90%;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
+
 .user {
-  align-self: flex-end;
   background: var(--accent);
   color: #fff;
+  align-self: flex-end;
+  margin-left: auto;
 }
+
 .ai {
-  align-self: flex-start;
-  background: var(--sidebar-dark);
+  background: var(--sidebar-bg-dark);
   color: var(--ai-text-dark);
+  align-self: flex-start;
+  margin-right: auto;
 }
-.light .ai {
-  background: var(--sidebar-light);
+
+body.light .ai {
+  background: var(--sidebar-bg-light);
   color: var(--ai-text-light);
 }
+
 
 /* Input area */
 .chat-input-area {
