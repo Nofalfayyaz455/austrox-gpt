@@ -98,6 +98,18 @@ html, body {
   box-shadow: 4px 0 20px rgba(0,0,0,0.2);
   border-radius: 0 20px 20px 0;
 }
+.about-btn {
+  width: 20px;
+  margin-left: 50%;
+  margin-bottom: 90%;
+  background: fixed;
+  align-items: center;
+  padding: 10px 10px 10px 10px;
+  border-radius: 9px;
+  color: violet;
+
+  
+}
 
 .light .sidebar {
   background: var(--sidebar-light);
