@@ -424,3 +424,12 @@ body.light .ai {
     bottom: 110px;
   }
 }
+@media (max-width: 768px) {
+  .sidebar {
+    z-index: 1001;
+  }
+
+  .chat-input-area {
+    z-index: 10 !important;
+  }
+}
