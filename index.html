@@ -56,24 +56,21 @@
       </div>
     </aside>
 
-  <main class="chat-main">
-  <!-- Chat Box container -->
-    <div class="chat-box-wrapper">
-      <a href="aboutus.html" class="about-btn">About Creator</a>
-    <div id="chat-box" class="chat-box">
-      <!-- AI/User messages get rendered here -->
-    </div>
-    </div>
+    <main class="chat-main">
+      <div class="chat-box-wrapper">
+        <a href="aboutus.html" class="about-btn">About Creator</a>
+        <div id="chat-box" class="chat-box">
+          <!-- AI/User messages rendered here -->
+        </div>
+      </div>
 
-  <!-- Chat Input -->
-    <div class="chat-input-area">
-      <input id="user-input" placeholder="Type a message…" />
-      <button class="send-btn" onclick="sendMessage()">⬆️</button>
-      <button class="send-btn" id="voice-btn" title="Voice input" onclick="startVoiceInput()">🎤</button>
-    </div>
-  </main>
-
-  
+      <div class="chat-input-area">
+        <input id="user-input" placeholder="Type a message…" />
+        <button class="send-btn" onclick="sendMessage()">⬆️</button>
+        <button class="send-btn" id="voice-btn" title="Voice input" onclick="startVoiceInput()">🎤</button>
+      </div>
+    </main>
+  </div> <!-- ✅ Close container here -->
 
   <script src="auth.js"></script>
   <script src="script.js"></script>
