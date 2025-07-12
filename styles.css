@@ -433,3 +433,6 @@ body.light .ai {
     z-index: 10 !important;
   }
 }
+.sidebar-section.history-scroll {
+  margin-top: 16px;
+}
