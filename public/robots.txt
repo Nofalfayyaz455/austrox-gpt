@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://nofalai.vercel.app/sitemap.xml
