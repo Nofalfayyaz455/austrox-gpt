@@ -84,6 +84,10 @@
     <input id="login-username" placeholder="Username" required autofocus />
     <input id="login-password" type="password" placeholder="Password" required />
     <button type="submit">Login</button>
+    <p style="margin-top: 1rem;">
+  <a href="#" id="forgot-password-link" style="color: var(--accent); text-decoration: underline;">Forgot your password?</a>
+</p>
+
 
     <p class="auth-note">Don't have an account? <a href="register.html">Register here</a></p>
     <div style="display: flex; align-items: center; text-align: center; margin: 1.5rem 0;">
@@ -144,6 +148,42 @@
           alert("Google Login Failed: " + error.message);
         });
     });
+      const forgotLink = document.getElementById("forgot-password-link");
+  const modal = document.getElementById("forgot-password-modal");
+
+  forgotLink.onclick = () => modal.style.display = "flex";
+  function closeResetModal() {
+    modal.style.display = "none";
+  }
+
+  // Firebase Password Reset
+  function sendResetEmail() {
+    const email = document.getElementById("reset-email").value;
+    if (!email) {
+      alert("Please enter your email.");
+      return;
+    }
+
+    firebase.auth().sendPasswordResetEmail(email)
+      .then(() => {
+        alert("Password reset email sent! Check your inbox.");
+        closeResetModal();
+      })
+      .catch((error) => {
+        console.error("Reset email error:", error);
+        alert("Error: " + error.message);
+      });
+  }
   </script>
+  <!-- Forgot Password Modal -->
+  <div id="forgot-password-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:1000; align-items:center; justify-content:center;">
+    <div style="background:var(--bg-light); color:var(--text-light); padding:2rem; border-radius:10px; width:90%; max-width:400px;">
+      <h2 style="margin-bottom: 1rem;">Reset Password</h2>
+      <input type="email" id="reset-email" placeholder="Enter your email" required style="width:100%; padding:0.8rem; margin-bottom:1rem; background:var(--input-dark); color:var(--text-dark); border:1px solid #ccc; border-radius:5px;" />
+      <button onclick="sendResetEmail()" style="padding:0.8rem 1.5rem; background:var(--accent); border:none; color:#fff; border-radius:5px;">Send Reset Email</button>
+      <button onclick="closeResetModal()" style="margin-left:1rem; padding:0.8rem 1.5rem; background:#ccc; border:none; border-radius:5px;">Cancel</button>
+    </div>
+  </div>
+
 </body>
 </html>
