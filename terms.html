@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Terms & Conditions - AustroX-GPT</title>
+  <style>
+    :root {
+      --bg-light: #ffffff;
+      --bg-dark: #0d0f14;
+      --text-light: #1a1a1a;
+      --text-dark: #e0e0e0;
+      --accent: #00d1ff;
+    }
+
+    [data-theme="light"] {
+      background-color: var(--bg-light);
+      color: var(--text-light);
+    }
+
+    [data-theme="dark"] {
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      transition: background 0.3s, color 0.3s;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+    }
+
+    h1, h2 {
+      color: var(--accent);
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .theme-toggle {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background: var(--accent);
+      border: none;
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
+
+  <div class="container">
+    <h1>Terms & Conditions</h1>
+    <p><strong>Last updated:</strong> July 19, 2025</p>
+
+    <p>Welcome to AustroX-GPT. By accessing or using our services, you agree to be bound by these Terms and Conditions.</p>
+
+    <h2>1. Use of Service</h2>
+    <p>AustroX-GPT is designed for educational and general AI interaction purposes only. You must be at least 13 years old to use our service.</p>
+
+    <h2>2. User Conduct</h2>
+    <p>You agree not to use AustroX-GPT for illegal, harmful, or abusive purposes. You are responsible for the content you input into the system.</p>
+
+    <h2>3. Intellectual Property</h2>
+    <p>All rights to the AustroX-GPT brand, logo, and software belong to the creator, Nofal Fayyaz. Do not copy, redistribute, or resell the service.</p>
+
+    <h2>4. Changes to Terms</h2>
+    <p>We reserve the right to update these terms at any time. Continued use of the service constitutes acceptance of the updated terms.</p>
+
+    <h2>5. Contact</h2>
+    <p>If you have questions about these Terms, please contact: <a href="mailto:nofalgpt@gmail.com">nofalgpt@gmail.com</a>.</p>
+
+    <p style="margin-top: 2rem;"><a href="index.html">← Back to Home</a></p>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      html.dataset.theme = html.dataset.theme === "dark" ? "light" : "dark";
+    }
+  </script>
+</body>
+</html>
