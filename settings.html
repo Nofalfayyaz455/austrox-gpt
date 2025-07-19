@@ -4,9 +4,37 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Settings | AustroX‑GPT</title>
-  <link rel="stylesheet" href="styles.css" />
   <link rel="icon" href="favicon.ico" />
   <style>
+    :root {
+      --accent: #00d1ff;
+
+      --text-light: #1a1a1a;
+      --text-dark: #e0e0e0;
+
+      --card-bg-dark: #13151a;
+      --card-bg-light: #ffffff;
+
+      --input-bg-dark: #1e222a;
+      --input-bg-light: #f2f2f2;
+
+      --border-dark: #333;
+      --border-light: #ccc;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #0d0f14;
+      color: var(--text-dark);
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body.light {
+      background: #f7f7f7;
+      color: var(--text-light);
+    }
+
     .settings-container {
       max-width: 600px;
       margin: 50px auto;
@@ -17,15 +45,16 @@
       color: var(--text-dark);
     }
 
-    .light .settings-container {
+    body.light .settings-container {
       background: var(--card-bg-light);
       color: var(--text-light);
       box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     }
 
-    .settings-container h2 {
+    h2 {
       margin-bottom: 20px;
       font-size: 1.8rem;
+      color: var(--accent);
     }
 
     .settings-section {
@@ -38,8 +67,8 @@
       font-weight: 500;
     }
 
-    .settings-section input[type="text"],
-    .settings-section input[type="file"] {
+    input[type="text"],
+    input[type="file"] {
       width: 100%;
       padding: 10px;
       border-radius: 8px;
@@ -48,7 +77,8 @@
       color: var(--text-dark);
     }
 
-    .light .settings-section input {
+    body.light input[type="text"],
+    body.light input[type="file"] {
       background: var(--input-bg-light);
       color: var(--text-light);
       border: 1px solid var(--border-light);
@@ -62,6 +92,8 @@
       border: none;
       border-radius: 8px;
       cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
     }
 
     .settings-section button:hover {
@@ -87,6 +119,8 @@
       width: 48px;
       height: 48px;
       border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--accent);
     }
 
     .back-link {
@@ -115,7 +149,7 @@
     <div class="settings-section">
       <label>Change Profile Picture</label>
       <div class="profile-preview">
-        <img id="profilePreview" src="" />
+        <img id="profilePreview" src="" onerror="this.src='https://ui-avatars.com/api/?name=User'" />
         <span id="currentUserName"></span>
       </div>
       <input type="file" accept="image/*" onchange="updateProfileImage(event)" />
@@ -133,22 +167,17 @@
 
   <script src="auth.js"></script>
   <script>
-  // Load and apply stored theme
-     if (localStorage.getItem("theme") === "light") {
-       document.documentElement.classList.add("light");
-       document.body.classList.add("light");
+    // Theme Loader
+    if (localStorage.getItem("theme") === "light") {
+      document.body.classList.add("light");
     }
 
-  // Toggle theme
     function toggleTheme() {
-      document.documentElement.classList.toggle("light");
       document.body.classList.toggle("light");
-      const newTheme = document.documentElement.classList.contains("light") ? "light" : "dark";
+      const newTheme = document.body.classList.contains("light") ? "light" : "dark";
       localStorage.setItem("theme", newTheme);
     }
-  </script>
 
-  <script>
     const user = JSON.parse(localStorage.getItem("currentUser")) || {};
     document.getElementById("displayNameInput").value = user.name || "";
     document.getElementById("profilePreview").src = user.picture || "https://ui-avatars.com/api/?name=User";
@@ -174,6 +203,12 @@
         alert("Profile picture updated!");
       };
       reader.readAsDataURL(file);
+    }
+
+    function logout() {
+      localStorage.removeItem("currentUser");
+      alert("Logged out!");
+      window.location.href = "login.html";
     }
   </script>
 </body>
