@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings | AustroX‑GPT</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="favicon.ico" />
+  <style>
+    .settings-container {
+      max-width: 600px;
+      margin: 50px auto;
+      background: var(--card-bg-dark);
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+      color: var(--text-dark);
+    }
+
+    .light .settings-container {
+      background: var(--card-bg-light);
+      color: var(--text-light);
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .settings-container h2 {
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+    }
+
+    .settings-section {
+      margin-bottom: 25px;
+    }
+
+    .settings-section label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .settings-section input[type="text"],
+    .settings-section input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border-dark);
+      background: var(--input-bg-dark);
+      color: var(--text-dark);
+    }
+
+    .light .settings-section input {
+      background: var(--input-bg-light);
+      color: var(--text-light);
+      border: 1px solid var(--border-light);
+    }
+
+    .settings-section button {
+      padding: 10px 20px;
+      margin-top: 10px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .settings-section button:hover {
+      background: #00aacc;
+    }
+
+    .logout-btn {
+      background: crimson;
+    }
+
+    .logout-btn:hover {
+      background: darkred;
+    }
+
+    .profile-preview {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .profile-preview img {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      text-decoration: none;
+      color: var(--accent);
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body class="auth-body">
+  <div class="settings-container">
+    <a href="index.html" class="back-link">← Back to Chat</a>
+    <h2>⚙️ Settings</h2>
+
+    <div class="settings-section">
+      <label>Change Display Name</label>
+      <input type="text" id="displayNameInput" placeholder="Enter your new name" />
+      <button onclick="saveDisplayName()">Save Name</button>
+    </div>
+
+    <div class="settings-section">
+      <label>Change Profile Picture</label>
+      <div class="profile-preview">
+        <img id="profilePreview" src="" />
+        <span id="currentUserName"></span>
+      </div>
+      <input type="file" accept="image/*" onchange="updateProfileImage(event)" />
+    </div>
+
+    <div class="settings-section">
+      <label>Toggle Theme</label>
+      <button onclick="toggleTheme()">🌓 Switch Theme</button>
+    </div>
+
+    <div class="settings-section">
+      <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+  <script>
+  // Load and apply stored theme
+     if (localStorage.getItem("theme") === "light") {
+       document.documentElement.classList.add("light");
+       document.body.classList.add("light");
+    }
+
+  // Toggle theme
+    function toggleTheme() {
+      document.documentElement.classList.toggle("light");
+      document.body.classList.toggle("light");
+      const newTheme = document.documentElement.classList.contains("light") ? "light" : "dark";
+      localStorage.setItem("theme", newTheme);
+    }
+  </script>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem("currentUser")) || {};
+    document.getElementById("displayNameInput").value = user.name || "";
+    document.getElementById("profilePreview").src = user.picture || "https://ui-avatars.com/api/?name=User";
+    document.getElementById("currentUserName").textContent = user.name || "User";
+
+    function saveDisplayName() {
+      const newName = document.getElementById("displayNameInput").value.trim();
+      if (newName.length === 0) return alert("Name can't be empty");
+      user.name = newName;
+      localStorage.setItem("currentUser", JSON.stringify(user));
+      alert("Name updated!");
+      document.getElementById("currentUserName").textContent = newName;
+    }
+
+    function updateProfileImage(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        user.picture = reader.result;
+        localStorage.setItem("currentUser", JSON.stringify(user));
+        document.getElementById("profilePreview").src = reader.result;
+        alert("Profile picture updated!");
+      };
+      reader.readAsDataURL(file);
+    }
+  </script>
+</body>
+</html>

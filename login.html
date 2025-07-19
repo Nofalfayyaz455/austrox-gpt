@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <meta name="title" content="AustroX-GPT | Free AI Chat Assistant">
+  <meta name="description" content="AustroX-GPT is a fast, smart AI assistant like ChatGPT. Built by Nofal Fayyaz. Features deep thinking, voice input, and a premium design.">
+  <meta name="keywords" content="AustroX GPT, AustroX AI, free AI chat, GPT chat, ChatGPT alternative, AI assistant, Nofal AI, Pakistani AI, voice AI">
+  <meta name="author" content="Nofal Fayyaz">
+  <meta name="robots" content="index, follow">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://austrox.vercel.app/">
+  <meta property="og:title" content="AustroX-GPT | Free AI Chat Assistant">
+  <meta property="og:description" content="Use AustroX-GPT – a premium AI assistant built by Nofal. Chat, think, and talk with next-gen AI.">
+  <meta property="og:image" content="https://austrox.vercel.app/preview.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://austrox.vercel.app/">
+  <meta name="twitter:title" content="AustroX-GPT | Free AI Chat Assistant">
+  <meta name="twitter:description" content="AustroX-GPT is a powerful ChatGPT-style AI built by Nofal. Use Quick or Deep modes with voice input support.">
+  <meta name="twitter:image" content="https://austrox.vercel.app/preview.jpg">
+  <link rel="icon" href="favicon.ico" />
+  <title>AustroX-GPT | Free AI Chat Assistant</title>
+
+  <script>
+    if (localStorage.getItem("currentUser")) window.location.href = "index.html";
+    if (localStorage.getItem("theme") === "light") document.documentElement.classList.add("light");
+  </script>
+
+  <style>
+    :root {
+      --bg-dark:#0e1117;--bg-light:#f7f7f7;--text-dark:#e0e0e0;--text-light:#1a1a1a;
+      --card-bg-dark:#161b22;--card-bg-light:#f0f0f0;--input-bg-dark:#1e222a;--input-bg-light:#fff;
+      --accent:#00d1ff;--border-dark:#333;--border-light:#ccc;
+    }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body.auth-body {
+      background:var(--bg-dark); color:var(--text-dark); font-family:Segoe UI,sans-serif;
+      min-height:100vh; display:flex; align-items:center; justify-content:center; transition:0.3s;
+    }
+    .light.auth-body { background:var(--bg-light); color:var(--text-light); }
+    .auth-card {
+      background:var(--card-bg-dark); padding:2rem; border-radius:10px;
+      box-shadow:0 0 15px rgba(0,0,0,0.6); max-width:400px; text-align:center; width:90%;
+    }
+    .light .auth-card {
+      background:var(--card-bg-light); box-shadow:0 0 10px #aaa;
+    }
+    .auth-card input {
+      width:90%; padding:12px; margin:10px 0; border:1px solid var(--border-dark);
+      background:var(--input-bg-dark); color:var(--text-dark); border-radius:6px; font-size:1rem;
+    }
+    .light .auth-card input {
+      background:var(--input-bg-light); color:var(--text-light); border:1px solid var(--border-light);
+    }
+    .auth-card button {
+      margin:15px 0 5px; padding:12px 25px; background:var(--accent); color:#fff;
+      border:none; border-radius:6px; font-size:1rem; cursor:pointer; transition:0.3s;
+    }
+    .auth-card button:hover { background:#009ecb; }
+    .auth-note { font-size:.9rem; margin-bottom:15px; }
+    .auth-note a { color:#00b3ff; text-decoration:none; }
+    .theme-toggle {
+      padding:8px 16px; background:transparent; border:1px solid #888; border-radius:4px;
+      cursor:pointer;
+    }
+    .theme-toggle:hover { background:rgba(255,255,255,0.1); }
+
+    /* Google login style */
+    .google-btn {
+      margin-top:10px; display:flex; align-items:center; justify-content:center;
+      gap:10px; background:#fff; color:#333; padding:12px 20px; font-size:1rem;
+      border-radius:6px; border:1px solid #ccc; cursor:pointer;
+    }
+    .google-btn img { width:20px; height:20px; }
+    .light .google-btn { background:#f7f7f7; color:#1a1a1a; }
+    .google-btn:hover { background:#f0f0f0; }
+  </style>
+</head>
+<body class="auth-body">
+  <form class="auth-card" onsubmit="login();return false;">
+    <h1>🔐 AustroX‑GPT Login</h1>
+    <input id="login-username" placeholder="Username" required autofocus />
+    <input id="login-password" type="password" placeholder="Password" required />
+    <button type="submit">Login</button>
+
+    <p class="auth-note">Don't have an account? <a href="register.html">Register here</a></p>
+
+    <!-- Google Login -->
+    <button type="button" id="googleLogin" class="google-btn">
+      <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo" />
+      Login with Google
+    </button>
+
+    <button type="button" class="theme-toggle" onclick="toggleTheme()">🌓 Toggle Theme</button>
+  </form>
+
+  <script src="auth.js"></script>
+
+  <!-- Firebase SDK (v11.10.0) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA7J-qMgYD0AuIFSQ45rzU2tALtRZWHmwE",
+      authDomain: "austrox-gpt.firebaseapp.com",
+      projectId: "austrox-gpt",
+      storageBucket: "austrox-gpt.firebasestorage.app",
+      messagingSenderId: "70633222222",
+      appId: "1:70633222222:web:e989b8718fc3f502c5131f",
+      measurementId: "G-SQD3V1STWE"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    getAnalytics(app);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    document.getElementById("googleLogin").addEventListener("click", () => {
+      signInWithPopup(auth, provider)
+        .then(result => {
+          const user = result.user;
+          const currentUser = {
+            name: user.displayName,
+            email: user.email,
+            picture: user.photoURL
+          };
+          localStorage.setItem("currentUser", JSON.stringify(currentUser));
+          window.location.href = "index.html";
+        })
+        .catch(error => {
+          alert("Google Login Failed: " + error.message);
+        });
+    });
+  </script>
+</body>
+</html>

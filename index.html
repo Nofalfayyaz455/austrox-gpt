@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AustroX-GPT | Free AI Chat Assistant</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="favicon.ico" />
+
+  <script>
+    if (!localStorage.getItem("currentUser")) window.location.href = "login.html";
+    if (localStorage.getItem("theme") === "light") document.documentElement.classList.add("light");
+  </script>
+
+  <style>
+    .user-profile {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .user-profile img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
+
+    .profile-dropdown {
+      position: absolute;
+      top: 40px;
+      right: 0;
+      background: var(--card-bg-dark);
+      border: 1px solid var(--border-dark);
+      border-radius: 6px;
+      min-width: 200px;
+      display: none;
+      flex-direction: column;
+      z-index: 1000;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      padding: 6px;
+    }
+
+    .profile-dropdown.show {
+      display: flex;
+    }
+
+    .profile-dropdown span,
+    .profile-dropdown button {
+      padding: 8px 14px;
+      font-size: 0.9rem;
+      border: none;
+      background: none;
+      color: var(--text-dark);
+      text-align: left;
+      width: 100%;
+    }
+
+    .profile-dropdown button:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .light .profile-dropdown {
+      background: var(--card-bg-light);
+      border: 1px solid var(--border-light);
+    }
+
+    .light .profile-dropdown span,
+    .light .profile-dropdown button {
+      color: var(--text-light);
+    }
+  </style>
+</head>
+<body>
+  <div class="mobile-header">
+    <button id="menu-toggle">☰</button>
+    <h2>AustroX‑GPT 💎</h2>
+    <div class="user-profile" onclick="toggleProfileDropdown()">
+      <img id="userAvatar" src="" alt="User" />
+      <div class="profile-dropdown" id="profile-dropdown">
+        <span id="userName">User</span>
+        <span id="userEmail">user@email.com</span>
+        <span id="verifiedBadge" style="display:none;">✔️ Google Verified</span>
+        <hr style="margin: 6px 0;" />
+        <button onclick="window.location.href='settings.html'">⚙️ Settings</button>
+        <button onclick="logout()">🚪 Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-content">
+        <h1>AustroX‑GPT</h1>
+        <div><button onclick="startNewChat()">➕ New Chat</button></div>
+
+        <div class="sidebar-section">
+          <label>Mode</label>
+          <div class="mode-buttons">
+            <button id="quickBtn" class="active-mode" onclick="setMode('quick')">⚡ Quick</button>
+            <button id="deepBtn" onclick="setMode('deep')">🧠 Deep</button>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <label>Model</label>
+          <select onchange="setModel(this.value)">
+            <option value="google/gemini-2.0-flash-001">AustoX Fast Model</option>
+            <option value="deepseek/deepseek-chat-v3-0324">AustroX Code Generator</option>
+            <option value="google/gemma-3-27b-it">AustroX Advanced Model</option>
+          </select>
+        </div>
+
+        <div class="sidebar-section history-scroll">
+          <h3>History</h3>
+          <ul id="chat-history-list"></ul>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <button onclick="toggleTheme()">🌓 Theme</button>
+        <button onclick="logout()">🚪 Logout</button>
+      </div>
+    </aside>
+
+    <main class="chat-main">
+      <div class="chat-box-wrapper">
+        <a href="aboutus.html" class="about-btn">About Creator</a>
+        <div id="chat-box" class="chat-box"></div>
+      </div>
+
+      <div class="chat-input-area">
+        <input id="user-input" placeholder="Type a message…" />
+        <button class="send-btn" onclick="sendMessage()">⬆️</button>
+        <button class="send-btn" id="voice-btn" onclick="startVoiceInput()">🎤</button>
+      </div>
+    </main>
+  </div>
+
+  <script src="auth.js"></script>
+  <script src="script.js"></script>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    const defaultAvatar = "https://ui-avatars.com/api/?name=Guest";
+
+    if (user) {
+      document.getElementById("userAvatar").src = user.picture || defaultAvatar;
+      document.getElementById("userName").textContent = user.name || "User";
+      document.getElementById("userEmail").textContent = user.email || "Email";
+      if (user.type === "google") {
+        document.getElementById("verifiedBadge").style.display = "inline-block";
+      }
+    }
+
+    document.addEventListener("click", function (e) {
+      const dropdown = document.getElementById("profile-dropdown");
+      if (!e.target.closest(".user-profile")) {
+        dropdown.classList.remove("show");
+      }
+    });
+  </script>
+</body>
+</html>
