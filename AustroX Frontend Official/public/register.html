@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Register – AustroX‑GPT</title>
+<script>
+  if (localStorage.getItem("currentUser")) window.location.href="index.html";
+  if (localStorage.getItem("theme")==="light") document.documentElement.classList.add("light");
+</script>
+<style>
+  /* same styling as login.html */
+  :root{--bg-dark:#0d0f14;--bg-light:#f7f7f7;--text-dark:#e0e0e0;--text-light:#1a1a1a;
+    --card-dark:#16151d;--card-light:#f5f5f5;--input-dark:#1e222a;--input-light:#fff;
+    --accent:#00d1ff;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Segoe UI',sans-serif;min-height:100vh;display:flex;
+    align-items:center;justify-content:center;background:var(--bg-dark);color:var(--text-dark);
+    transition:0.3s;}
+  .light{background:var(--bg-light);color:var(--text-light);}
+  .card{background:var(--card-dark);padding:2rem;border-radius:10px;
+    box-shadow:0 0 15px rgba(0,0,0,0.6);max-width:400px;width:90%;text-align:center;}
+  .light .card{background:var(--card-light);box-shadow:0 0 10px #aaa;}
+  .card input{width:100%;padding:12px;margin:8px 0;border:1px solid #333;
+    border-radius:6px;background:var(--input-dark);color:var(--text-dark);}
+  .light .card input{background:var(--input-light);color:var(--text-light);border:1px solid #ccc;}
+  .card button{width:100%;padding:12px;margin:12px 0;background:var(--accent);
+    color:#fff;border:none;border-radius:6px;cursor:pointer;transition:0.3s;}
+  .card button:hover{background:#009ecb;}
+</style>
+</head>
+<body>
+  <form class="card" onsubmit="register();return false">
+    <h1>🖊️ AustroX‑GPT Register</h1>
+    <input id="register-username" placeholder="Choose username" required/>
+    <input id="register-password" type="password" placeholder="Choose password" required/>
+    <button type="submit">Register</button>
+    <p style="font-size:.9rem">
+      Already have an account? <a href="login.html">Login here</a>
+    </p>
+    <button type="button" onclick="toggleTheme()">🌓 Toggle Theme</button>
+  </form>
+<script src="auth.js"></script>
+</body>
+</html>
