@@ -1,0 +1,16 @@
+# Ignore Windows system files
+*.lnk
+desktop.ini
+Thumbs.db
+
+# Ignore VSCode and other IDE settings
+.vscode/
+*.code-workspace
+
+# Ignore Python and cache files
+__pycache__/
+*.pyc
+
+# Ignore backups
+*.bak
+*.tmp
