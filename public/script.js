@@ -11,7 +11,7 @@ let currentModel = "google/gemini-2.0-flash-001";
 // ======================
 // Backend URL
 // ======================
-const API_URL = "https://austrox-backendofficial.containers.snapdeploy.app/";
+const API_URL = "https://austrox-backendofficial.containers.snapdeploy.app/api/chat";
 
 // ======================
 // Initialize
