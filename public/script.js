@@ -6,7 +6,7 @@ let currentUser = localStorage.getItem("currentUser");
 let messages = [];
 let currentChatId = Date.now();
 let currentMode = "quick";
-let currentModel = "google/gemma-3-27b-it";
+let currentModel = "auto";
 
 // ======================
 // Backend URL
