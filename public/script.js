@@ -108,7 +108,7 @@ function sendMessage() {
     dots = (dots+1)%4;
     thinking.innerText = "[Thinking" + ".".repeat(dots) + "]";
   }, 500);
-  fetch("https://austrox-backend-production.up.railway.app/api/chat", {
+  fetch("https://austrox-backendofficial.containers.snapdeploy.app/", {
     method:"POST",
     headers:{ "Content-Type":"application/json" },
     body: JSON.stringify({
