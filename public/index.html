@@ -36,11 +36,12 @@
         </div>
         <div class="sidebar-section">
       <label>Model</label>
-         <select onchange="setModel(this.value)">
-              <option value="google/gemma-3-27b-it">⚡ AustroX Fast Model</option>
-              <option value="qwen/qwen3-coder">💻 AustroX Code Generator</option>
-              <option value="google/gemma-3-27b-it" selected>🧠 AustroX Advanced Model</option> 
-         </select>
+        <select onchange="setModel(this.value)">
+            <option value="auto" selected>🤖 AustroX Smart AI</option>
+            <option value="google/gemma-3-27b-it">⚡ AustroX Fast</option>
+            <option value="qwen/qwen3-coder">💻 AustroX Code</option>
+            <option value="openai/gpt-oss-20b">🧠 AustroX Advanced</option>
+       </select>
         </div>
         <div class="sidebar-section history-scroll">
           <h3>History</h3>
