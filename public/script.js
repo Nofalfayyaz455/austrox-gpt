@@ -6,7 +6,7 @@ let currentUser = localStorage.getItem("currentUser");
 let messages = [];
 let currentChatId = Date.now();
 let currentMode = "quick";
-let currentModel = "google/gemini-2.0-flash-001";
+let currentModel = "openai/gpt-oss-20b";
 
 // ======================
 // Backend URL
