@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,24 +8,31 @@
   if (!localStorage.getItem("currentUser")) {
     window.location.href = "login.html";
   }
-  if (localStorage.getItem("theme")==="light") document.documentElement.classList.add("light");
+  if (localStorage.getItem("theme") === "light") {
+    document.documentElement.classList.add("light");
+  }
 </script>
 <link rel="stylesheet" href="styles.css">
+<!-- FontAwesome Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
   <div class="about-btn">
       <a href="aboutus.html">About Creator</a>
   </div>
+  
   <div class="mobile-header">
     <button id="menu-toggle">☰</button>
     <h2>AustroX‑GPT 💎</h2>
     <button onclick="logout()">🚪</button>
   </div>
+
   <div class="container">
     <aside id="sidebar" class="sidebar">
       <div class="sidebar-content">
         <h1>AustroX‑GPT</h1>
-        <div><button onclick="startNewChat()">➕ New Chat</button></div>
+        <div><button class="new-chat-btn" onclick="startNewChat()">➕ New Chat</button></div>
+        
         <div class="sidebar-section">
           <label>Mode</label>
           <div class="mode-buttons">
@@ -34,25 +40,30 @@
             <button id="deepBtn" onclick="setMode('deep')">🧠 Deep</button>
           </div>
         </div>
+        
         <div class="sidebar-section">
-      <label>Model</label>
-        <select onchange="setModel(this.value)">
-            <option value="auto" selected>🤖 AustroX Smart AI</option>
-            <option value="openai/gpt-oss-20b">⚡ AustroX Fast</option>
-            <option value="qwen/qwen3-coder">💻 AustroX Code</option>
-            <option value="google/gemma-3-27b-it">🧠 AustroX Advanced</option>
-       </select>
+          <label>Model</label>
+          <select onchange="setModel(this.value)">
+              <option value="auto" selected>🤖 AustroX Smart AI</option>
+              <option value="openai/gpt-oss-20b">⚡ AustroX Fast</option>
+              <option value="qwen/qwen3-coder">💻 AustroX Code</option>
+              <option value="google/gemma-3-27b-it">🧠 AustroX Advanced</option>
+          </select>
         </div>
+        
         <div class="sidebar-section history-scroll">
           <h3>History</h3>
           <ul id="chat-history-list"></ul>
         </div>
       </div>
+      
       <div class="sidebar-footer">
-        <button onclick="toggleTheme()">🌓 Theme</button>
-        <button onclick="logout()">🚪 Logout</button>
+        <button onclick="openSettings()"><i class="fa-solid fa-gear"></i> Settings</button>
+        <button onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke"></i> Theme</button>
+        <button onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
       </div>
     </aside>
+
     <main class="chat-main">
       <div id="chat-box" class="chat-box"></div>
       <div class="chat-input-area">
@@ -62,6 +73,64 @@
       </div>
     </main>
   </div>
+
+  <!-- Modern Overlay Settings Modal -->
+  <div id="settings-modal" class="settings-modal">
+    <div class="settings-content">
+      <div class="settings-header">
+        <h2><i class="fa-solid fa-sliders"></i> AustroX Settings</h2>
+        <span class="close-btn" onclick="closeSettings()">&times;</span>
+      </div>
+      <div class="settings-body">
+        <!-- Settings Tabs -->
+        <div class="settings-tabs">
+          <button class="tab-link active" onclick="changeSettingsTab(event, 'profile-tab')">Profile</button>
+          <button class="tab-link" onclick="changeSettingsTab(event, 'memory-tab')">Memory (Context)</button>
+          <button class="tab-link" onclick="changeSettingsTab(event, 'permissions-tab')">Permissions & Apps</button>
+        </div>
+
+        <!-- Settings Tab Panes -->
+        <div id="profile-tab" class="tab-pane active">
+          <div class="form-group">
+            <label for="settings-username">Display Username</label>
+            <input type="text" id="settings-username" placeholder="Change display name..." />
+          </div>
+          <div class="form-group">
+            <label>Security Level</label>
+            <p id="auth-status-badge" style="color: var(--accent); font-weight: bold; margin-top: 5px;">Secure Encryption Active</p>
+          </div>
+        </div>
+
+        <div id="memory-tab" class="tab-pane">
+          <div class="form-group">
+            <label for="settings-memory">Custom Instructions (System Memory)</label>
+            <textarea id="settings-memory" rows="4" placeholder="E.g., 'I prefer explanations in detail, use Javascript code fragments, and keep tone enthusiastic'"></textarea>
+            <p style="font-size: 0.8rem; color: #888; margin-top: 4px;">This guides AustroX-GPT's behavior across all chat sessions.</p>
+          </div>
+        </div>
+
+        <div id="permissions-tab" class="tab-pane">
+          <div class="form-group checkbox-group">
+            <label><input type="checkbox" id="perm-mic" checked> Allow Microphone Access</label>
+          </div>
+          <div class="form-group checkbox-group">
+            <label><input type="checkbox" id="perm-history" checked> Save Conversation History on Server</label>
+          </div>
+          <div class="form-group">
+            <label>Integrated Applications</label>
+            <div class="app-integration">
+              <span>🔌 AustroX Search API Wrapper</span>
+              <button class="small-btn disabled" disabled>Connected</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="settings-footer">
+        <button class="save-settings-btn" onclick="saveSettings()">Apply Modifications</button>
+      </div>
+    </div>
+  </div>
+
 <script src="auth.js"></script>
 <script src="script.js"></script>
 </body>
