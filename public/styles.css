@@ -464,3 +464,195 @@ body.light ::-webkit-scrollbar-thumb {
 @keyframes fadeInMsg {
   to { opacity: 1; }
 }
+
+
+
+/* Settings Gear & Controls UI Modifications */
+.sidebar-footer button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-dark);
+  box-shadow: none;
+}
+.sidebar-footer button:hover {
+  background: var(--accent-gradient);
+}
+
+/* Modal Styling */
+.settings-modal {
+  display: none;
+  position: fixed;
+  z-index: 10000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  justify-content: center;
+  align-items: center;
+}
+
+.settings-content {
+  background: #111827;
+  border: 1px solid #1f2937;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 550px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalScale 0.25s cubic-bezier(.4,0,.2,1);
+}
+
+@keyframes modalScale {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.settings-header {
+  padding: 1.2rem;
+  border-bottom: 1px solid #1f2937;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.settings-header h2 {
+  color: #fff;
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.close-btn {
+  color: #9ca3af;
+  font-size: 1.8rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.close-btn:hover {
+  color: #fff;
+}
+
+.settings-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+/* Settings Tabs */
+.settings-tabs {
+  display: flex;
+  border-bottom: 1px solid #1f2937;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+
+.tab-link {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: #9ca3af;
+  padding: 8px 12px !important;
+  font-size: 0.95rem !important;
+  cursor: pointer;
+  border-bottom: 2px solid transparent !important;
+  border-radius: 0 !important;
+  width: auto !important;
+  margin-bottom: 0 !important;
+}
+
+.tab-link:hover {
+  color: #fff;
+  transform: none !important;
+}
+
+.tab-link.active {
+  color: var(--accent);
+  border-bottom: 2px solid var(--accent) !important;
+}
+
+.tab-pane {
+  display: none;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+/* Form Fields inside Settings */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.form-group input[type="text"], .form-group textarea {
+  width: 100%;
+  padding: 10px;
+  background: #1e222a;
+  border: 1px solid #333;
+  color: #fff;
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.app-integration {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1e222a;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #1f2937;
+}
+
+.small-btn {
+  padding: 4px 8px !important;
+  font-size: 0.8rem !important;
+  width: auto !important;
+  margin: 0 !important;
+  border-radius: 4px !important;
+}
+
+.small-btn.disabled {
+  background: #1f2937 !important;
+  color: #4b5563 !important;
+  cursor: not-allowed;
+}
+
+.settings-footer {
+  padding: 1.2rem;
+  border-top: 1px solid #1f2937;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.save-settings-btn {
+  width: auto !important;
+  padding: 10px 20px !important;
+  margin: 0 !important;
+  font-size: 0.95rem !important;
+  border-radius: 8px !important;
+}
