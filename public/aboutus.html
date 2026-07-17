@@ -1,226 +1,129 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Me | Developer & Creator</title>
+    <title>Nofal Fayyaz Warraich Profile</title>
     <style>
-        /* Modern Reset & Base Styling */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
+        /* General Page Styling */
         body {
-            background-color: #0b0f19;
-            color: #f3f4f6;
-            line-height: 1.6;
-            padding: 2rem 1rem;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        /* Header Section */
-        header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        header h1 {
-            font-size: 2.5rem;
-            color: #38bdf8;
-            margin-bottom: 0.5rem;
-        }
-
-        header p {
-            color: #9ca3af;
-            font-size: 1.1rem;
-        }
-
-        /* Section Styling */
-        section {
-            background-color: #111827;
-            border: 1px solid #1f2937;
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-
-        h2 {
-            font-size: 1.8rem;
-            color: #f3f4f6;
-            margin-bottom: 1rem;
-            border-left: 4px solid #38bdf8;
-            padding-left: 10px;
-        }
-
-        p {
-            color: #d1d5db;
-            margin-bottom: 1rem;
-        }
-
-        /* Grid for Interests */
-        .interests-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-        }
-
-        .interest-card {
-            background-color: #1f2937;
-            padding: 1.5rem;
-            border-radius: 8px;
-            border: 1px solid #374151;
-            transition: transform 0.2s ease, border-color 0.2s ease;
-        }
-
-        .interest-card:hover {
-            transform: translateY(-3px);
-            border-color: #38bdf8;
-        }
-
-        .interest-card h3 {
-            color: #38bdf8;
-            margin-bottom: 0.5rem;
-            font-size: 1.2rem;
-        }
-
-        /* Showcase / AustroX Section Styling */
-        .showcase {
-            background: linear-gradient(135deg, #1e1b4b 0%, #111827 100%);
-            border: 1px solid #4338ca;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .showcase::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 60%);
-            pointer-events: none;
-        }
-
-        .badge {
-            display: inline-block;
-            background-color: #4338ca;
-            color: #e0e7ff;
-            font-size: 0.8rem;
-            font-weight: bold;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            margin-bottom: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .tech-tags {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e3f2fd; /* Light blue background to complement image */
             display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 1rem;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
         }
 
-        .tag {
-            background-color: #1f2937;
-            color: #9ca3af;
-            font-size: 0.85rem;
-            padding: 0.25rem 0.6rem;
-            border-radius: 4px;
-            border: 1px solid #374151;
-        }
-
-        /* Footer */
-        footer {
+        /* Profile Card Container */
+        .profile-card {
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            width: 350px;
+            overflow: hidden;
             text-align: center;
-            margin-top: 4rem;
-            color: #6b7280;
-            font-size: 0.9rem;
+            transition: transform 0.3s ease;
         }
 
-        footer a {
-            color: #38bdf8;
+        .profile-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Image Section */
+        .profile-header {
+            position: relative;
+            background-color: #0d47a1; /* Dark blue from suit */
+            height: 100px;
+        }
+
+        .profile-img-container {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            border: 5px solid #ffffff;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            background-color: #ffffff; /* Fallback for slow loading */
+        }
+
+        .profile-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center top;
+        }
+
+        /* Content Section */
+        .profile-body {
+            padding: 70px 25px 30px 25px;
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0d47a1;
+            margin: 0 0 10px 0;
+        }
+
+        .profile-info {
+            font-size: 0.95rem;
+            color: #555555;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #333333;
+        }
+
+        /* Call to Action Button */
+        .profile-btn {
+            display: inline-block;
+            background-color: #0d47a1;
+            color: #ffffff;
+            padding: 10px 25px;
+            margin-top: 20px;
+            border-radius: 25px;
             text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease;
         }
 
-        footer a:hover {
-            text-decoration: underline;
+        .profile-btn:hover {
+            background-color: #1565c0;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <!-- Header -->
-        <header>
-            <h1>About Me</h1>
-            <p>Developer, Creator, and AI Enthusiast</p>
-        </header>
+    <div class="profile-card">
+        <!-- Blue Header Background -->
+        <div class="profile-header"></div>
+        
+        <!-- Image in a Circular Frame -->
+        <div class="profile-img-container">
+            <img src="image_2ba1ce.jpg" alt="Profile picture of Nofal Fayyaz Warraich" class="profile-img">
+        </div>
 
-        <!-- Intro Section -->
-        <section id="intro">
-            <h2>Who I Am</h2>
-            <p>
-                Hello! I am a passionate developer and tech creator focused on building modern web experiences and exploring the absolute cutting edge of artificial intelligence. I love translating ideas into clean, functional code, and I'm constantly pushing the boundaries of what's possible with software.
-            </p>
-            <p>
-                Whether it's crafting beautiful responsive interfaces or structuring logic for intelligent systems, my goal is to build technology that is engaging, highly functional, and accessible.
-            </p>
-        </section>
-
-        <!-- Showcase: AustroX GPT AI Chatbot -->
-        <section id="austrox" class="showcase">
-            <span class="badge">Featured Project</span>
-            <h2>AustroX GPT AI Chatbot</h2>
-            <p>
-                My absolute biggest foundation and flagship project is <strong>AustroX GPT</strong>. Designed to be a highly capable, fast, and responsive AI companion, AustroX GPT is engineered to deliver seamless conversations, help debug logic, provide creative support, and make AI interactions feel natural and accessible.
-            </p>
-            <p>
-                This project represents my dedication to making conversational AI robust, structured, and user-centric, laying the groundwork for how I approach building interactive, smart systems.
-            </p>
-            <div class="tech-tags">
-                <span class="tag">Generative AI</span>
-                <span class="tag">Web Integration</span>
-                <span class="tag">UX Design</span>
-                <span class="tag">Chatbot Tech</span>
+        <!-- Person Information -->
+        <div class="profile-body">
+            <h2 class="profile-name">Nofal Fayyaz Warraich</h2>
+            <div class="profile-info">
+                <p><span class="info-label">Nationality:</span> Pakistan</p>
+                <p><span class="info-label">Age:</span> 16 Years</p>
             </div>
-        </section>
-
-        <!-- Interests Section -->
-        <section id="interests">
-            <h2>Interests in Tech & AI</h2>
-            <p>My journey is fueled by an insatiable curiosity for emerging tech landscapes. Here is what keeps me coding and exploring late into the night:</p>
-            
-            <div class="interests-grid">
-                <div class="interest-card">
-                    <h3>Artificial Intelligence</h3>
-                    <p>Fascinated by Large Language Models (LLMs), natural language interfaces, and building custom wrappers that elevate user productivity.</p>
-                </div>
-                <div class="interest-card">
-                    <h3>Frontend & Web Design</h3>
-                    <p>Crafting sleek, accessible, and ultra-responsive user interfaces with HTML, CSS, and modern web standards.</p>
-                </div>
-                <div class="interest-card">
-                    <h3>Interactive Applications</h3>
-                    <p>Designing tools and widgets that respond dynamically to user inputs, creating clean and intuitive user experiences.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Footer -->
-        <footer>
-            <p>&copy; 2026. Built with passion. back to <a href="index.html">Home</a></p>
-        </footer>
+            <!-- Optional: Button/Link -->
+            <a href="#" class="profile-btn">View Profile</a>
+        </div>
     </div>
 
 </body>
