@@ -17,12 +17,41 @@
             background-color: #080c14;
             color: #f3f4f6;
             line-height: 1.7;
-            padding: 4rem 1.5rem;
+            padding: 2rem 1.5rem 4rem 1.5rem; /* Adjusted top padding to make room for back button */
         }
 
         .wrapper {
             max-width: 900px;
             margin: 0 auto;
+            position: relative;
+        }
+
+        /* Navigation Button Styling */
+        .nav-header {
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 2rem;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #38bdf8;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 0.6rem 1.2rem;
+            border: 1px solid #1f2937;
+            border-radius: 8px;
+            background-color: #111827;
+            transition: all 0.2s ease;
+        }
+
+        .back-btn:hover {
+            background-color: #1f2937;
+            border-color: #38bdf8;
+            transform: translateX(-3px);
         }
 
         /* Top Hero Section */
@@ -158,11 +187,27 @@
             border-top: 1px solid #1f2937;
             padding-top: 2rem;
         }
+
+        footer a {
+            color: #38bdf8;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
 
     <div class="wrapper">
+        
+        <!-- Navigation Header (Back Button) -->
+        <div class="nav-header">
+            <a href="index.html" class="back-btn">
+                ← Back to Profile
+            </a>
+        </div>
         
         <!-- Hero Header -->
         <header class="hero">
@@ -190,7 +235,7 @@
             </div>
         </div>
 
-        <!-- Introduction Block -->
+        <!-- Main Content Sections -->
         <main>
             <section class="section-block">
                 <h2>Who I Am</h2>
@@ -198,7 +243,7 @@
                     I am a highly driven frontend developer and technology creator based in Pakistan. I specialize in translating ideas into clean, functional code, with a core focus on responsive web design and building intelligent tools that solve real-world problems.
                 </p>
                 <p>
-                    Coding and AI logic are more than just interests to me; they are the tools I use to build future-ready platforms. I continuousy push myself to explore complex workflows, write clean code, and design user-friendly digital environments.
+                    Coding and AI logic are more than just interests to me; they are the tools I use to build future-ready platforms. I continuously push myself to explore complex workflows, write clean code, and design user-friendly digital environments.
                 </p>
             </section>
 
@@ -237,7 +282,7 @@
 
         <!-- Footer -->
         <footer>
-            <p>&copy; 2026 Nofal Fayyaz Warraich. All rights reserved.</p>
+            <p>&copy; 2026 Nofal Fayyaz Warraich. Go back to <a href="index.html">Profile Home</a>.</p>
         </footer>
 
     </div>
