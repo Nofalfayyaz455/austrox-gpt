@@ -5,56 +5,76 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Login – AustroX-GPT</title>
 <script>
-  if (localStorage.getItem("currentUser")) {
-    window.location.href = "index.html";
-  }
   if (localStorage.getItem("theme") === "light") {
     document.documentElement.classList.add("light");
   }
 </script>
 <style>
   :root {
-    --bg-dark:#0e1117;--bg-light:#f7f7f7;--text-dark:#e0e0e0;--text-light:#1a1a1a;
-    --card-bg-dark:#161b22;--card-bg-light:#f0f0f0;--input-bg-dark:#1e222a;--input-bg-light:#fff;
-    --accent:#00d1ff;--border-dark:#333;--border-light:#ccc;
+    --bg-dark:#060816;--bg-light:#f5f7ff;--text-dark:#f2f6ff;--text-light:#111827;
+    --card-bg-dark:rgba(13, 20, 38, 0.94);--card-bg-light:#ffffff;--input-bg-dark:#10182d;--input-bg-light:#f9fbff;
+    --accent:#5ee7ff;--accent-strong:#2d9cff;--border-dark:#24304b;--border-light:#d9e2f2;
   }
   * { box-sizing:border-box; margin:0; padding:0; }
-  body.auth-body { background:var(--bg-dark); color:var(--text-dark); font-family:Segoe UI,sans-serif;
-    min-height:100vh; display:flex; align-items:center; justify-content:center; transition:0.3s;}
-  .light.auth-body { background:var(--bg-light); color:var(--text-light); }
-  .auth-card { background:var(--card-bg-dark); padding:2rem; border-radius:10px;
-    box-shadow:0 0 15px rgba(0,0,0,0.6); max-width:400px; text-align:center; width:90%; }
-  .light .auth-card { background:var(--card-bg-light); box-shadow:0 0 10px #aaa; }
+  body.auth-body { background: radial-gradient(circle at top, rgba(93, 194, 255, 0.18), transparent 28%), var(--bg-dark); color:var(--text-dark); font-family:Inter, Segoe UI, sans-serif;
+    min-height:100vh; display:flex; align-items:center; justify-content:center; transition:0.3s; padding:24px;}
+  .light.auth-body { background: radial-gradient(circle at top, rgba(45, 156, 255, 0.12), transparent 24%), var(--bg-light); color:var(--text-light); }
+  .auth-card { background:var(--card-bg-dark); padding:2rem; border-radius:18px;
+    box-shadow:0 16px 40px rgba(0,0,0,0.24); max-width:420px; text-align:center; width:100%; border:1px solid rgba(255,255,255,0.08); }
+  .light .auth-card { background:var(--card-bg-light); box-shadow:0 20px 50px rgba(15, 23, 42, 0.12); border-color:var(--border-light); }
   .auth-card input {
-    width:90%; padding:12px; margin:10px 0; border:1px solid var(--border-dark);
-    background:var(--input-bg-dark); color:var(--text-dark); border-radius:6px; font-size:1rem;
+    width:100%; padding:12px 14px; margin:10px 0; border:1px solid var(--border-dark);
+    background:var(--input-bg-dark); color:var(--text-dark); border-radius:10px; font-size:1rem;
   }
   .light .auth-card input {
     background:var(--input-bg-light); color:var(--text-light); border:1px solid var(--border-light);
   }
   .auth-card button {
-    margin:15px 0 5px; padding:12px 25px; background:var(--accent); color:#fff;
-    border:none; border-radius:6px; font-size:1rem; cursor:pointer; transition:0.3s;
+    width:100%; margin:10px 0 5px; padding:12px 18px; background:linear-gradient(135deg, var(--accent), var(--accent-strong)); color:#fff;
+    border:none; border-radius:10px; font-size:1rem; cursor:pointer; transition:0.3s; font-weight:600;
   }
-  .auth-card button:hover { background:#009ecb; }
-  .auth-note { font-size:.9rem; margin-bottom:15px; }
-  .auth-note a { color:#00b3ff; text-decoration:none; }
+  .auth-card button:hover { transform:translateY(-1px); box-shadow:0 8px 20px rgba(45, 156, 255, 0.18); }
+  .auth-note { font-size:.9rem; margin:10px 0 12px; }
+  .auth-note a { color:var(--accent-strong); text-decoration:none; }
   .theme-toggle {
-    padding:8px 16px; background:transparent; border:1px solid #888; border-radius:4px;
-    cursor:pointer;
+    padding:8px 16px; background:transparent; border:1px solid #888; border-radius:999px;
+    cursor:pointer; width:auto;
   }
   .theme-toggle:hover { background:rgba(255,255,255,0.1); }
+  .google-btn { background:#fff; color:#1f1f1f; width:100%; margin-top:8px; }
+  .google-btn:hover { background:#f2f2f2; }
+  .auth-card .muted { color:#8aa0be; font-size:0.85rem; margin-top:8px; }
 </style>
 </head>
 <body class="auth-body">
-  <form class="auth-card" onsubmit="login();return false;">
+  <form id="login-form" class="auth-card">
+    <div class="muted">Secure sign-in for the next generation of AI experiences</div>
     <h1>🔐 AustroX‑GPT Login</h1>
-    <input id="login-username" placeholder="Username" required autofocus />
-    <input id="login-password" type="password" placeholder="Password" required />
+    <input id="login-email" type="email" placeholder="Email" autocomplete="email" required autofocus />
+    <div style="position:relative; width:90%; margin:10px auto 0;">
+      <input id="login-password" type="password" placeholder="Password" autocomplete="current-password" required />
+      <button type="button" data-password-toggle="login-password" aria-label="Show password" style="position:absolute; right:8px; top:50%; transform:translateY(-50%); background:transparent; border:none; color:var(--accent); cursor:pointer;">👁</button>
+    </div>
+    <label style="display:flex; align-items:center; gap:8px; margin:10px auto; width:90%; font-size:0.95rem;">
+      <input id="remember-me" type="checkbox" />
+      <span>Keep me signed in</span>
+    </label>
     <button type="submit">Login</button>
+    <button id="forgot-password-btn" type="button">Forgot Password?</button>
+    <button id="resend-verification-btn" type="button">Resend Verification</button>
     <p class="auth-note">Don't have an account? <a href="register.html">Register here</a></p>
+    <button type="button" class="google-btn">🔵 Continue with Google</button>
     <button type="button" class="theme-toggle" onclick="toggleTheme()">🌓 Toggle Theme</button>
   </form>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+<script src="firebase.js"></script>
+<script src="utils.js"></script>
+<script src="firestore.js"></script>
+<script src="storage.js"></script>
 <script src="auth.js"></script>
 </body>
 </html>
+
