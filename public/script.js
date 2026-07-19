@@ -1,30 +1,50 @@
 // ======================
 // State
 // ======================
-let currentUser = localStorage.getItem("currentUser");
+let currentUser = null;
 let messages = [];
 let currentChatId = Date.now();
 let currentMode = "quick";
 let currentModel = "auto";
 
 // Custom Configuration Preferences
-let customUsername = currentUser || "User";
+let customUsername = "User";
 let customMemory = "";
 let saveHistoryOnServer = true;
+let preferredTone = "friendly";
+let responseLength = "balanced";
+let assistantStyle = "balanced";
+let useEmojis = true;
+let useMarkdown = true;
+let factualMode = true;
 
 // ======================
 // Backend URL
 // ======================
-const API_URL = "https://austrox-backendofficial.containers.snapdeploy.app/api/chat";
+const BACKEND_BASE_URL = "https://austrox-backendofficial.containers.snapdeploy.app";
+const API_URL = `${BACKEND_BASE_URL}/api/chat`;
+const HISTORY_API_URL = `${BACKEND_BASE_URL}/api/history`;
+const PROFILE_API_URL = `${BACKEND_BASE_URL}/api/profile`;
 
 // ======================
 // Initialize
 // ======================
-window.addEventListener("DOMContentLoaded", () => {
-    loadUserSettings();
-    loadChatHistoryList();
-    renderMessages();
-    setMode(currentMode);
+window.addEventListener("DOMContentLoaded", async () => {
+    await window.AustroXFirebase.initializeFirebase();
+    const auth = await window.AustroXFirebase.getAuth();
+    auth.onAuthStateChanged(async (user) => {
+        if (!user) {
+            window.location.href = "login.html";
+            return;
+        }
+        currentUser = user.uid;
+        const profile = await window.AustroXFirestore.getUserProfile(user.uid);
+        customUsername = profile?.displayName || user.displayName || "User";
+        loadUserSettings();
+        loadChatHistoryList();
+        renderMessages();
+        setMode(currentMode);
+    });
 
     document.getElementById("menu-toggle").onclick = () => {
         document.getElementById("sidebar").classList.toggle("open");
@@ -46,45 +66,95 @@ window.addEventListener("DOMContentLoaded", () => {
 // Load & Save User Settings
 // ======================
 function loadUserSettings() {
-    let users = JSON.parse(localStorage.getItem("users") || "{}");
-    if (users[currentUser] && typeof users[currentUser] === "object") {
-        const profile = users[currentUser];
-        customUsername = profile.displayUsername || currentUser;
+    const profile = window.AustroXFirebase.getCurrentProfile();
+    if (profile) {
+        customUsername = profile.displayName || profile.displayUsername || customUsername;
         customMemory = profile.memory || "";
-        saveHistoryOnServer = profile.historyAllowed !== undefined ? profile.historyAllowed : true;
+        saveHistoryOnServer = profile.historyEnabled !== undefined ? profile.historyEnabled : true;
+        preferredTone = profile.preferredTone || "friendly";
+        responseLength = profile.responseLength || "balanced";
+        assistantStyle = profile.assistantStyle || "balanced";
+        useEmojis = profile.useEmojis !== undefined ? profile.useEmojis : true;
+        useMarkdown = profile.useMarkdown !== undefined ? profile.useMarkdown : true;
+        factualMode = profile.factualMode !== undefined ? profile.factualMode : true;
         
-        // Update DOM Settings Input Values
-        document.getElementById("settings-username").value = customUsername;
-        document.getElementById("settings-memory").value = customMemory;
-        document.getElementById("perm-history").checked = saveHistoryOnServer;
-        document.getElementById("perm-mic").checked = profile.micAllowed !== undefined ? profile.micAllowed : true;
+        const setField = (id, value, isChecked = false) => {
+            const element = document.getElementById(id);
+            if (!element) return;
+            if (isChecked) {
+                element.checked = value;
+            } else {
+                element.value = value;
+            }
+        };
+
+        setField("settings-username", customUsername);
+        setField("settings-memory", customMemory);
+        setField("settings-tone", preferredTone);
+        setField("settings-length", responseLength);
+        setField("settings-style", assistantStyle);
+        setField("setting-emojis", useEmojis, true);
+        setField("setting-markdown", useMarkdown, true);
+        setField("setting-facts", factualMode, true);
+        setField("perm-history", saveHistoryOnServer, true);
+        setField("perm-mic", profile.micAllowed !== undefined ? profile.micAllowed : true, true);
     }
 }
 
-function saveSettings() {
-    let users = JSON.parse(localStorage.getItem("users") || "{}");
-    if (users[currentUser]) {
-        if (typeof users[currentUser] !== "object") {
-            // Convert old text formats to objects
-            users[currentUser] = { password: users[currentUser] };
-        }
-        
-        users[currentUser].displayUsername = document.getElementById("settings-username").value.trim() || currentUser;
-        users[currentUser].memory = document.getElementById("settings-memory").value.trim();
-        users[currentUser].historyAllowed = document.getElementById("perm-history").checked;
-        users[currentUser].micAllowed = document.getElementById("perm-mic").checked;
-        
-        localStorage.setItem("users", JSON.stringify(users));
-        
-        // Sync working application cache values
-        customUsername = users[currentUser].displayUsername;
-        customMemory = users[currentUser].memory;
-        saveHistoryOnServer = users[currentUser].historyAllowed;
-        
-        alert("Settings saved. Context updated.");
-        closeSettings();
-        renderMessages();
+async function saveSettings() {
+    const profile = window.AustroXFirebase.getCurrentProfile();
+    const user = window.AustroXFirebase.getCurrentUser();
+    if (!profile || !user) return;
+
+    const getValue = (id, isChecked = false) => {
+        const element = document.getElementById(id);
+        if (!element) return undefined;
+        return isChecked ? element.checked : element.value;
+    };
+
+    const newProfile = {
+        displayName: (getValue("settings-username") || customUsername).toString().trim(),
+        memory: (getValue("settings-memory") || "").toString().trim(),
+        historyEnabled: getValue("perm-history", true),
+        micAllowed: getValue("perm-mic", true),
+        preferredTone: getValue("settings-tone") || "friendly",
+        responseLength: getValue("settings-length") || "balanced",
+        assistantStyle: getValue("settings-style") || "balanced",
+        useEmojis: getValue("setting-emojis", true),
+        useMarkdown: getValue("setting-markdown", true),
+        factualMode: getValue("setting-facts", true)
+    };
+
+    await window.AustroXFirestore.updateUserProfile(user.uid, newProfile);
+    window.AustroXFirebase.setCurrentProfile({ ...profile, ...newProfile });
+
+    try {
+        await fetch(PROFILE_API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                uid: user.uid,
+                profile: { ...profile, ...newProfile },
+                settings: newProfile
+            })
+        });
+    } catch (error) {
+        console.warn("Could not sync settings to backend profile endpoint:", error);
     }
+
+    customUsername = newProfile.displayName;
+    customMemory = newProfile.memory;
+    saveHistoryOnServer = newProfile.historyEnabled;
+    preferredTone = newProfile.preferredTone;
+    responseLength = newProfile.responseLength;
+    assistantStyle = newProfile.assistantStyle;
+    useEmojis = newProfile.useEmojis;
+    useMarkdown = newProfile.useMarkdown;
+    factualMode = newProfile.factualMode;
+
+    window.AustroXUtils.showToast("Settings saved.", "success");
+    closeSettings();
+    renderMessages();
 }
 
 // ======================
@@ -141,16 +211,43 @@ async function saveChatHistory() {
     localStorage.setItem("chatHistory", JSON.stringify(history));
     loadChatHistoryList();
 
-    // SERVER DATABASE SYNC
+    if (window.AustroXFirestore?.saveChat) {
+        try {
+            await window.AustroXFirestore.saveChat(
+                currentChatId,
+                messages[0]?.content?.slice(0, 40) || "Untitled Chat",
+                messages
+            );
+        } catch (error) {
+            console.warn("Could not sync conversation to Firestore:", error);
+        }
+    }
+
     if (saveHistoryOnServer) {
         try {
-            await fetch("https://austrox-backendofficial.containers.snapdeploy.app/api/history", {
+            await fetch(HISTORY_API_URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
+                    uid: currentUser,
                     username: currentUser,
                     chatId: currentChatId,
-                    messages: messages
+                    messages: messages,
+                    title: messages[0]?.content?.slice(0, 40) || "Untitled Chat",
+                    profile: {
+                        displayName: customUsername,
+                        memory: customMemory,
+                        historyEnabled: saveHistoryOnServer
+                    },
+                    settings: {
+                        preferredTone,
+                        responseLength,
+                        assistantStyle,
+                        useEmojis,
+                        useMarkdown,
+                        factualMode,
+                        historyEnabled: saveHistoryOnServer
+                    }
                 })
             });
         } catch (err) {
@@ -191,7 +288,21 @@ function loadChatHistoryList() {
 // ======================
 function renderMessages() {
     const chatBox = document.getElementById("chat-box");
+    const welcomeBanner = document.getElementById("welcome-banner");
+    const welcomeName = document.getElementById("welcome-name");
+
     chatBox.innerHTML = "";
+    chatBox.appendChild(welcomeBanner);
+    welcomeName.textContent = customUsername || "there";
+    chatBox.classList.toggle("has-messages", messages.length > 0);
+
+    if (messages.length === 0) {
+        welcomeBanner.style.display = "flex";
+        chatBox.scrollTop = 0;
+        return;
+    }
+
+    welcomeBanner.style.display = "none";
 
     messages.forEach(msg => {
         const div = document.createElement("div");
@@ -246,7 +357,13 @@ async function sendMessage() {
             body: JSON.stringify({
                 message: payloadMessage,
                 mode: currentMode,
-                model: currentModel
+                model: currentModel,
+                tone: preferredTone,
+                length: responseLength,
+                style: assistantStyle,
+                useEmojis,
+                useMarkdown,
+                factualMode
             })
         });
 
@@ -281,8 +398,8 @@ async function sendMessage() {
 // Voice Input
 // ======================
 function startVoiceInput() {
-    let users = JSON.parse(localStorage.getItem("users") || "{}");
-    const micAllowed = (users[currentUser] && users[currentUser].micAllowed !== undefined) ? users[currentUser].micAllowed : true;
+    const profile = window.AustroXFirebase.getCurrentProfile();
+    const micAllowed = profile?.micAllowed !== undefined ? profile.micAllowed : true;
 
     if (!micAllowed) {
         alert("Microphone permissions have been disabled in AustroX Settings.");
