@@ -4,41 +4,85 @@
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Register – AustroX‑GPT</title>
 <script>
-  if (localStorage.getItem("currentUser")) window.location.href="index.html";
   if (localStorage.getItem("theme")==="light") document.documentElement.classList.add("light");
 </script>
 <style>
-  /* same styling as login.html */
-  :root{--bg-dark:#0d0f14;--bg-light:#f7f7f7;--text-dark:#e0e0e0;--text-light:#1a1a1a;
-    --card-dark:#16151d;--card-light:#f5f5f5;--input-dark:#1e222a;--input-light:#fff;
-    --accent:#00d1ff;}
+  :root{--bg-dark:#060816;--bg-light:#f5f7ff;--text-dark:#f2f6ff;--text-light:#111827;
+    --card-dark:rgba(13, 20, 38, 0.94);--card-light:#ffffff;--input-dark:#10182d;--input-light:#f9fbff;
+    --accent:#5ee7ff;--accent-strong:#2d9cff;--border-dark:#24304b;--border-light:#d9e2f2;}
   *{box-sizing:border-box;margin:0;padding:0;}
-  body{font-family:'Segoe UI',sans-serif;min-height:100vh;display:flex;
-    align-items:center;justify-content:center;background:var(--bg-dark);color:var(--text-dark);
-    transition:0.3s;}
-  .light{background:var(--bg-light);color:var(--text-light);}
-  .card{background:var(--card-dark);padding:2rem;border-radius:10px;
-    box-shadow:0 0 15px rgba(0,0,0,0.6);max-width:400px;width:90%;text-align:center;}
-  .light .card{background:var(--card-light);box-shadow:0 0 10px #aaa;}
-  .card input{width:100%;padding:12px;margin:8px 0;border:1px solid #333;
-    border-radius:6px;background:var(--input-dark);color:var(--text-dark);}
-  .light .card input{background:var(--input-light);color:var(--text-light);border:1px solid #ccc;}
-  .card button{width:100%;padding:12px;margin:12px 0;background:var(--accent);
-    color:#fff;border:none;border-radius:6px;cursor:pointer;transition:0.3s;}
-  .card button:hover{background:#009ecb;}
+  body.auth-body{font-family:Inter, Segoe UI, sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at top, rgba(93, 194, 255, 0.18), transparent 28%), var(--bg-dark);color:var(--text-dark);transition:0.3s;padding:24px;}
+  .light.auth-body{background:radial-gradient(circle at top, rgba(45, 156, 255, 0.12), transparent 24%), var(--bg-light);color:var(--text-light);}
+  .card{background:var(--card-dark);padding:2rem;border-radius:18px;box-shadow:0 16px 40px rgba(0,0,0,0.24);max-width:520px;width:100%;text-align:left;border:1px solid rgba(255,255,255,0.08);}
+  .light .card{background:var(--card-light);box-shadow:0 20px 50px rgba(15, 23, 42, 0.12);border-color:var(--border-light);}
+  .card h1,.card .muted{text-align:center;}
+  .grid{display:grid;gap:10px;grid-template-columns:1fr 1fr;}
+  .card input,.card select,.card textarea{width:100%;padding:12px 14px;margin:8px 0;border:1px solid var(--border-dark);border-radius:10px;background:var(--input-dark);color:var(--text-dark);}
+  .light .card input,.light .card select,.light .card textarea{background:var(--input-light);color:var(--text-light);border:1px solid var(--border-light);}
+  .card button{width:100%;padding:12px 14px;margin:10px 0;background:linear-gradient(135deg, var(--accent), var(--accent-strong));color:#fff;border:none;border-radius:10px;cursor:pointer;transition:0.3s;font-weight:600;}
+  .card button:hover{transform:translateY(-1px); box-shadow:0 8px 20px rgba(45, 156, 255, 0.18);} 
+  .card .secondary{background:#fff;color:#111827;}
+  .card .secondary:hover{background:#f2f2f2;}
+  .card p{font-size:.9rem;margin-top:6px;}
+  .card a{color:var(--accent-strong);text-decoration:none;}
+  .strength-wrap{margin:6px 0 10px;text-align:left;}
+  .strength-bar{height:8px;border-radius:999px;background:#444;overflow:hidden;}
+  .strength-fill{height:100%;width:0%;transition:width 0.2s ease;}
+  .strength-text{font-size:.85rem;margin-top:4px;}
+  .checklist{font-size:.9rem;display:grid;gap:4px;margin:8px 0 12px;}
+  .checklist .ok{color:#20c997;} .checklist .bad{color:#ff4d4f;}
+  .hint{font-size:.8rem;color:#8aa0be;margin-top:-4px;}
+  .inline{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .inline input[type='checkbox']{width:auto;margin:0;}
+  @media (max-width:768px){.grid{grid-template-columns:1fr;}}
 </style>
 </head>
-<body>
-  <form class="card" onsubmit="register();return false">
+<body class="auth-body">
+  <form id="register-form" class="card">
+    <div class="muted">Create a secure account for your intelligent workspace</div>
     <h1>🖊️ AustroX‑GPT Register</h1>
-    <input id="register-username" placeholder="Choose username" required/>
-    <input id="register-password" type="password" placeholder="Choose password" required/>
+    <div class="grid">
+      <div><input id="register-username" placeholder="Username" autocomplete="username" required/></div>
+      <div><input id="register-display-name" placeholder="Display name" autocomplete="name"/></div>
+      <div><input id="register-first-name" placeholder="First name" autocomplete="given-name"/></div>
+      <div><input id="register-last-name" placeholder="Last name" autocomplete="family-name"/></div>
+    </div>
+    <div id="username-suggestion" class="hint">Use 3-20 lowercase letters, numbers, or underscores.</div>
+    <input id="register-email" type="email" placeholder="Email address" autocomplete="email" required/>
+    <div style="position:relative; width:100%;">
+      <input id="register-password" type="password" placeholder="Choose password" autocomplete="new-password" required/>
+      <button type="button" data-password-toggle="register-password" aria-label="Show password" style="position:absolute; right:8px; top:50%; transform:translateY(-50%); background:transparent; border:none; color:var(--accent); cursor:pointer;">👁</button>
+    </div>
+    <div style="position:relative; width:100%;">
+      <input id="register-confirm-password" type="password" placeholder="Confirm password" autocomplete="new-password" required/>
+      <button type="button" data-password-toggle="register-confirm-password" aria-label="Show password" style="position:absolute; right:8px; top:50%; transform:translateY(-50%); background:transparent; border:none; color:var(--accent); cursor:pointer;">👁</button>
+    </div>
+    <div class="strength-wrap">
+      <div class="strength-bar"><div id="password-strength-fill" class="strength-fill"></div></div>
+      <div id="password-strength-text" class="strength-text">Strength: Weak</div>
+    </div>
+    <div id="password-checklist" class="checklist"></div>
+    <div class="grid">
+      <div><select id="register-country"><option value="">Select country</option></select></div>
+      <div><select id="register-language"><option value="">Select language</option></select></div>
+    </div>
+    <input id="register-timezone" placeholder="Timezone" />
+    <div class="hint">Timezone is detected automatically and can be edited.</div>
+    <div class="inline"><input id="register-accept-terms" type="checkbox" required/><label for="register-accept-terms">I accept the terms and privacy policy</label></div>
+    <div class="inline"><input id="register-marketing" type="checkbox"/><label for="register-marketing">Send me product updates</label></div>
     <button type="submit">Register</button>
-    <p style="font-size:.9rem">
-      Already have an account? <a href="login.html">Login here</a>
-    </p>
+    <p>Already have an account? <a href="login.html">Login here</a></p>
+    <button type="button" class="secondary google-btn">🔵 Continue with Google</button>
     <button type="button" onclick="toggleTheme()">🌓 Toggle Theme</button>
   </form>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+<script src="firebase.js"></script>
+<script src="utils.js"></script>
+<script src="firestore.js"></script>
+<script src="storage.js"></script>
 <script src="auth.js"></script>
 </body>
 </html>
